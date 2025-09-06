@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropWise - Your Farming Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a2332;
+            --secondary-dark: #2d3748;
+            --accent-green: #48bb78;
+            --accent-brown: #8b6914;
+            --text-light: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #4a5568;
+            --hover-bg: #3a4553;
+            --success-green: #38a169;
+            --warning-yellow: #f6e05e;
+            --danger-red: #fc8181;
+            --info-blue: #63b3ed;
+            --warning-bg: #744210;
+            --danger-bg: #742a2a;
+            --success-bg: #22543d;
+            --info-bg: #2a4365;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(26, 35, 50, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-green);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--accent-green);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-brown));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: var(--hover-bg);
+            color: var(--accent-green);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="grain" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="%23ffffff" opacity="0.02"/></pattern></defs><rect width="100" height="20" fill="url(%23grain)"/></svg>');
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--text-light), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .chat-container {
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin: 2rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-brown));
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .chat-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--primary-dark);
+            position: relative;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--secondary-dark);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            max-width: 85%;
+            line-height: 1.6;
+            word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, var(--accent-green), #38a169);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background: var(--hover-bg);
+            color: var(--text-light);
+            border-bottom-left-radius: 4px;
+            border-left: 4px solid var(--accent-green);
+        }
+
+        /* Enhanced formatting for bot messages */
+        .bot-message h1, .bot-message h2, .bot-message h3, .bot-message h4, .bot-message h5, .bot-message h6 {
+            color: var(--accent-green);
+            font-weight: 600;
+            margin: 1.2rem 0 0.8rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-green);
+        }
+
+        .bot-message h1 { font-size: 1.4rem; }
+        .bot-message h2 { font-size: 1.3rem; }
+        .bot-message h3 { font-size: 1.2rem; }
+        .bot-message h4 { font-size: 1.1rem; }
+
+        .bot-message p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .bot-message p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Strong text highlighting */
+        .bot-message strong {
+            color: var(--accent-green);
+            font-weight: 600;
+            background: rgba(72, 187, 120, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* Emphasis styling */
+        .bot-message em {
+            color: var(--warning-yellow);
+            font-style: italic;
+        }
+
+        /* Code blocks */
+        .bot-message code {
+            background: var(--primary-dark);
+            color: var(--info-blue);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Lists styling */
+        .bot-message ul, .bot-message ol {
+            margin: 1rem 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .bot-message ul li, .bot-message ol li {
+            margin: 0.8rem 0;
+            padding-left: 2rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Bullet points */
+        .bot-message ul li:before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Numbered lists */
+        .bot-message ol {
+            counter-reset: item;
+        }
+
+        .bot-message ol li {
+            counter-increment: item;
+        }
+
+        .bot-message ol li:before {
+            content: counter(item) ".";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.1em;
+            background: rgba(72, 187, 120, 0.1);
+            padding: 2px 6px;
+            border-radius: 50%;
+            min-width: 1.5em;
+            text-align: center;
+        }
+
+        /* Special content types with color coding */
+        .precaution, .warning {
+            background: var(--warning-bg);
+            border-left: 4px solid var(--warning-yellow);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .precaution:before, .warning:before {
+            content: '⚠️ ';
+            color: var(--warning-yellow);
+            font-weight: bold;
+        }
+
+        .danger, .alert {
+            background: var(--danger-bg);
+            border-left: 4px solid var(--danger-red);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger:before, .alert:before {
+            content: '🚨 ';
+            color: var(--danger-red);
+            font-weight: bold;
+        }
+
+        .success, .recommendation {
+            background: var(--success-bg);
+            border-left: 4px solid var(--success-green);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success:before, .recommendation:before {
+            content: '✅ ';
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        .info, .note {
+            background: var(--info-bg);
+            border-left: 4px solid var(--info-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info:before, .note:before {
+            content: 'ℹ️ ';
+            color: var(--info-blue);
+            font-weight: bold;
+        }
+
+        /* Blockquotes */
+        .bot-message blockquote {
+            background: var(--primary-dark);
+            border-left: 4px solid var(--accent-green);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 3rem 2rem;
+        }
+
+        .welcome-message i {
+            font-size: 4rem;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-message h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .welcome-message p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .input-container {
+            padding: 1.5rem;
+            background: var(--secondary-dark);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-field textarea {
+            width: 100%;
+            background: var(--primary-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            resize: none;
+            min-height: 60px;
+            max-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .input-field textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-green);
+            font-size: 1.2rem;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--accent-green), #38a169);
+            border: none;
+            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(72, 187, 120, 0.3);
+        }
+
+        .send-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: var(--secondary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            background: var(--primary-dark);
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .header-content {
+                padding: 1rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .send-btn {
+                width: 100%;
+                height: 50px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+        }
+
+        /* Animation for new messages */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <h1>CropWise</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#chat"><i class="fas fa-comments"></i> Chat</a></li>
+                    <li><a href="#features"><i class="fas fa-leaf"></i> Features</a></li>
+                    <li><a href="/weather"><i class="fas fa-cloud-sun-rain"></i> Weather</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero" id="home">
+            <h2>Your Digital Farming Assistant</h2>
+            <p>Get expert advice on crop management, pest control, weather insights, and sustainable farming practices. Powered by AI to help you grow better crops.</p>
+        </section>
+
+        <section id="chat">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3><i class="fas fa-robot"></i> CropWise Assistant</h3>
+                    <p>Ask me anything about farming, crops, soil, weather, or agricultural practices</p>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <i class="fas fa-tractor"></i>
+                        <h4>Welcome to CropWise!</h4>
+                        <p>I'm here to help you with all your farming questions. Ask me about crop diseases, soil management, weather patterns, pest control, or any agricultural advice you need.</p>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <span style="margin-left: 10px; color: var(--text-muted);">Getting your answer...</span>
+                </div>
+
+                <div class="input-container">
+                    <div class="input-group">
+                        <div class="input-field">
+                            <i class="fas fa-comment-dots input-icon"></i>
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Ask about crops, soil health, pest control, weather..."
+                                rows="1"
+                            ></textarea>
+                        </div>
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <h4>Pest & Disease Control</h4>
+                <p>Identify crop diseases and pests early. Get recommendations for organic and chemical treatments tailored to your specific situation.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/weather'">
+                <div class="feature-icon">
+                    <i class="fas fa-cloud-sun-rain"></i>
+                </div>
+                <h4>Weather Insights</h4>
+                <p>Get real-time weather forecasts and understand how weather patterns affect your crops. Plan your farming activities with accurate weather data.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h4>Soil Management</h4>
+                <p>Learn about soil health, nutrient management, and sustainable farming practices to improve your crop yields year after year.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 CropWise. Empowering farmers with AI-driven agricultural insights.</p>
+        </div>
+    </footer>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const loading = document.getElementById('loading');
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Enhanced text formatting with intelligent content detection
+        function formatText(text) {
+            let formattedHTML = text;
+
+            // Convert markdown-style headers
+            formattedHTML = formattedHTML.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            formattedHTML = formattedHTML.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            formattedHTML = formattedHTML.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+            // Convert double line breaks to paragraph breaks
+            formattedHTML = formattedHTML.replace(/\n\n/g, '</p><p>');
+            formattedHTML = '<p>' + formattedHTML + '</p>';
+
+            // Clean up empty paragraphs
+            formattedHTML = formattedHTML.replace(/<p><\/p>/g, '');
+            formattedHTML = formattedHTML.replace(/<p>\s*<\/p>/g, '');
+
+            // Format bold and italic text
+            formattedHTML = formattedHTML.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedHTML = formattedHTML.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Format inline code
+            formattedHTML = formattedHTML.replace(/`(.*?)`/g, '<code>$1</code>');
+
+            // Convert numbered lists
+            formattedHTML = formattedHTML.replace(/(\d+\.\s.*?)(?=\n\d+\.|\n\n|$)/gs, function(match) {
+                const items = match.split(/(?=\d+\.)/);
+                let listHTML = '<ol>';
+                items.forEach(item => {
+                    const cleanItem = item.replace(/^\d+\.\s*/, '').trim();
+                    if (cleanItem) {
+                        listHTML += `<li>${cleanItem}</li>`;
+                    }
+                });
+                listHTML += '</ol>';
+                return listHTML;
+            });
+
+            // Convert bullet lists
+            formattedHTML = formattedHTML.replace(/([•\-\*]\s.*?)(?=\n[•\-\*]|\n\n|$)/gs, function(match) {
+                const items = match.split(/(?=[•\-\*])/);
+                let listHTML = '<ul>';
+                items.forEach(item => {
+                    const cleanItem = item.replace(/^[•\-\*]\s*/, '').trim();
+                    if (cleanItem) {
+                        listHTML += `<li>${cleanItem}</li>`;
+                    }
+                });
+                listHTML += '</ul>';
+                return listHTML;
+            });
+
+            // Intelligent content detection and styling
+            formattedHTML = detectAndStyleContent(formattedHTML);
+
+            return formattedHTML;
+        }
+
+        // Detect and style special content types
+        function detectAndStyleContent(html) {
+            // Precautions and warnings (red styling)
+            html = html.replace(/(precaution|warning|caution|danger|avoid|harmful|toxic|poisonous)[^.]*[.!]/gi, 
+                '<div class="precaution">$&</div>');
+
+            // Success/recommendations (green styling)
+            html = html.replace(/(recommend|suggestion|best practice|ideal|optimal|good|beneficial)[^.]*[.!]/gi, 
+                '<div class="recommendation">$&</div>');
+
+            // Important information (blue styling)
+            html = html.replace(/(note|important|remember|key point|tip)[^.]*[.!]/gi, 
+                '<div class="info">$&</div>');
+
+            // Temperature, measurements, and numbers
+            html = html.replace(/(\d+°[CF]|\d+\s*(?:degrees|°))/g, '<strong>$1</strong>');
+            html = html.replace(/(\d+\s*(?:kg|g|lbs|pounds|tons|litres|liters|ml|gallons))/gi, '<strong>$1</strong>');
+
+            // Highlight crop names, diseases, and pests
+            html = html.replace(/\b(aphids?|thrips?|whiteflies?|spider mites?|caterpillars?|bollworm|cutworm|armyworm)\b/gi, 
+                '<span style="color: var(--danger-red); font-weight: bold;">$1</span>');
+            
+            html = html.replace(/\b(blight|rust|wilt|rot|mold|mildew|fungus|virus|bacteria)\b/gi, 
+                '<span style="color: var(--danger-red); font-weight: bold;">$1</span>');
+
+            // Highlight beneficial insects and practices
+            html = html.replace(/\b(ladybugs?|predators?|beneficial insects?|organic|natural|biological control)\b/gi, 
+                '<span style="color: var(--success-green); font-weight: bold;">$1</span>');
+
+            return html;
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Hide welcome message if it exists
+            const welcomeMessage = document.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'none';
+            }
+
+            // Add user message
+            addMessage(message, 'user');
+            messageInput.value = '';
+            messageInput.style.height = '60px';
+            
+            // Show loading
+            loading.style.display = 'block';
+            sendBtn.disabled = true;
+            
+            try {
+                const formData = new FormData();
+                formData.append('msg', message);
+                formData.append('username', 'user'); // Add username if needed
+                
+                const response = await fetch('/get', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                const answer = data.answer || 'No answer received';
+                addMessage(answer, 'bot');
+            } catch (error) {
+                addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                console.error('Error:', error);
+            } finally {
+                loading.style.display = 'none';
+                sendBtn.disabled = false;
+            }
+        }
+
+        // Add message to chat
+        function addMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            if (type === 'bot') {
+                messageDiv.innerHTML = formatText(message);
+            } else {
+                messageDiv.textContent = message;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
