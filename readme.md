@@ -190,8 +190,6 @@ The UI automatically detects and styles different types of content:
 
 We're grateful to the following contributors who made CropWise possible:
 
-<div align="center">
-
 | Developer | LinkedIn |
 |-----------|----------|
 | **Aryan Thakur** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/aryan-thakur-b3075a2ba/) |
