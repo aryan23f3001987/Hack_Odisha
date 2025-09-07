@@ -207,56 +207,6 @@ We welcome contributions! Here's how you can help:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👥 Contributors
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://www.linkedin.com/in/aryan-thakur-b3075a2ba/">
-        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
-      </a>
-      <br>
-      <strong>Aryan Thakur</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-    <td align="center">
-      <a href="https://www.linkedin.com/in/zameershadan/">
-        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
-      </a>
-      <br>
-      <strong>Shadan Zameer</strong>
-      <br>
-      <em>AI/ML Engineer</em>
-    </td>
-  </tr>
-</table>
-
-## 👥 Contributors
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://www.linkedin.com/in/aryan-thakur-dummy-link">
-        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
-      </a>
-      <br>
-      <strong>Aryan Thakur</strong>
-      <br>
-      <em>Full Stack Developer</em>
-    </td>
-    <td align="center">
-      <a href="https://www.linkedin.com/in/shadan-zameer-dummy-link">
-        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
-      </a>
-      <br>
-      <strong>Shadan Zameer</strong>
-      <br>
-      <em>AI/ML Engineer</em>
-    </td>
-  </tr>
-</table>
-
 ## 🙏 Acknowledgments
 
 - **OpenAI** for providing powerful language models
