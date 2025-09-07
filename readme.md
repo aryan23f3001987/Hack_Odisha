@@ -254,14 +254,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔮 Future Enhancements
 
--📸 Image-Based Crop Disease Detection/n
-Implement an AI-powered system where farmers can upload images of their crops, and the bot will analyze them to identify diseases, nutrient deficiencies, and provide actionable recommendations for treatment.
--📱 Mobile App Development
-Launch a mobile application to give farmers convenient access to all features on-the-go, including crop recommendations, weather updates, and personalized guidance.
--🌐 IoT Sensor Integration
-Incorporate IoT devices to monitor soil moisture, temperature, and other environmental factors in real-time, enabling precision irrigation and automated alerts.
--🤝 Community & Marketplace Features
-Create a platform for farmers to connect, share insights, ask questions, and access a marketplace for seeds, fertilizers, and equipment, fostering collaboration and resource sharing.
+- **Image-based Crop Disease Detection:**  
+  Farmers will be able to upload images of their crops, and the AI-powered bot will detect diseases, nutrient deficiencies, and suggest actionable solutions to improve yield and plant health.
+
+- **Mobile App Development:**  
+  Develop a mobile application for easy access to crop insights, weather updates, and personalized guidance anytime, anywhere.
+
+- **IoT Sensor Integration:**  
+  Use IoT sensors to monitor soil moisture, temperature, and other environmental conditions, enabling precision irrigation and automated alerts.
+
+- **Community & Marketplace Features:**  
+  Build a platform for farmers to connect, share knowledge, ask questions, and access a marketplace for seeds, fertilizers, and equipment.
 
 ---
 
