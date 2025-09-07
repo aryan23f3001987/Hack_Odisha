@@ -254,7 +254,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔮 Future Enhancements
 
--📸 Image-Based Crop Disease Detection
+-📸 Image-Based Crop Disease Detection/n
 Implement an AI-powered system where farmers can upload images of their crops, and the bot will analyze them to identify diseases, nutrient deficiencies, and provide actionable recommendations for treatment.
 -📱 Mobile App Development
 Launch a mobile application to give farmers convenient access to all features on-the-go, including crop recommendations, weather updates, and personalized guidance.
