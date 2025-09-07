@@ -685,83 +685,151 @@
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
 
-        // Enhanced text formatting with intelligent content detection
+        // Improved text formatting function
         function formatText(text) {
-            let formattedHTML = text;
+            // Escape HTML first to prevent XSS
+            let formattedHTML = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-            // Convert markdown-style headers
-            formattedHTML = formattedHTML.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            formattedHTML = formattedHTML.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            formattedHTML = formattedHTML.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            // Split text into lines for processing
+            let lines = formattedHTML.split('\n');
+            let processedLines = [];
+            let inList = false;
+            let listType = null; // 'ul' or 'ol'
+            let listItems = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                // Skip empty lines
+                if (line === '') {
+                    if (inList) {
+                        // End current list
+                        processedLines.push(createList(listItems, listType));
+                        inList = false;
+                        listItems = [];
+                        listType = null;
+                    }
+                    processedLines.push(''); // Preserve empty lines for paragraph breaks
+                    continue;
+                }
+
+                // Check for numbered list items (1. 2. 3. etc.)
+                const numberedMatch = line.match(/^(\d+)\.\s+(.+)$/);
+                if (numberedMatch) {
+                    if (!inList || listType !== 'ol') {
+                        // Start new ordered list
+                        if (inList) {
+                            processedLines.push(createList(listItems, listType));
+                        }
+                        inList = true;
+                        listType = 'ol';
+                        listItems = [];
+                    }
+                    listItems.push(numberedMatch[2]);
+                    continue;
+                }
+
+                // Check for bullet list items (-, *, •)
+                const bulletMatch = line.match(/^[-*•]\s+(.+)$/);
+                if (bulletMatch) {
+                    if (!inList || listType !== 'ul') {
+                        // Start new unordered list
+                        if (inList) {
+                            processedLines.push(createList(listItems, listType));
+                        }
+                        inList = true;
+                        listType = 'ul';
+                        listItems = [];
+                    }
+                    listItems.push(bulletMatch[1]);
+                    continue;
+                }
+
+                // Not a list item, so close any open list
+                if (inList) {
+                    processedLines.push(createList(listItems, listType));
+                    inList = false;
+                    listItems = [];
+                    listType = null;
+                }
+
+                // Check for headers
+                if (line.startsWith('### ')) {
+                    processedLines.push(`<h3>${line.substring(4)}</h3>`);
+                } else if (line.startsWith('## ')) {
+                    processedLines.push(`<h2>${line.substring(3)}</h2>`);
+                } else if (line.startsWith('# ')) {
+                    processedLines.push(`<h1>${line.substring(2)}</h1>`);
+                } else {
+                    // Regular paragraph text
+                    processedLines.push(line);
+                }
+            }
+
+            // Close any remaining open list
+            if (inList) {
+                processedLines.push(createList(listItems, listType));
+            }
+
+            // Join lines and create paragraphs
+            let html = processedLines.join('\n');
 
             // Convert double line breaks to paragraph breaks
-            formattedHTML = formattedHTML.replace(/\n\n/g, '</p><p>');
-            formattedHTML = '<p>' + formattedHTML + '</p>';
+            let paragraphs = html.split('\n\n').filter(p => p.trim() !== '');
+            let finalHTML = '';
 
-            // Clean up empty paragraphs
-            formattedHTML = formattedHTML.replace(/<p><\/p>/g, '');
-            formattedHTML = formattedHTML.replace(/<p>\s*<\/p>/g, '');
+            for (let paragraph of paragraphs) {
+                paragraph = paragraph.trim();
+                if (paragraph.startsWith('<h') || paragraph.startsWith('<ul') || paragraph.startsWith('<ol')) {
+                    // Headers and lists don't need paragraph tags
+                    finalHTML += paragraph + '\n';
+                } else if (paragraph !== '') {
+                    // Wrap in paragraph tags
+                    finalHTML += `<p>${paragraph.replace(/\n/g, '<br>')}</p>\n`;
+                }
+            }
 
-            // Format bold and italic text
-            formattedHTML = formattedHTML.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            formattedHTML = formattedHTML.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Apply text formatting
+            finalHTML = applyTextFormatting(finalHTML);
 
-            // Format inline code
-            formattedHTML = formattedHTML.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Apply intelligent content detection
+            finalHTML = detectAndStyleContent(finalHTML);
 
-            // Convert numbered lists
-            formattedHTML = formattedHTML.replace(/(\d+\.\s.*?)(?=\n\d+\.|\n\n|$)/gs, function(match) {
-                const items = match.split(/(?=\d+\.)/);
-                let listHTML = '<ol>';
-                items.forEach(item => {
-                    const cleanItem = item.replace(/^\d+\.\s*/, '').trim();
-                    if (cleanItem) {
-                        listHTML += `<li>${cleanItem}</li>`;
-                    }
-                });
-                listHTML += '</ol>';
-                return listHTML;
-            });
+            return finalHTML;
+        }
 
-            // Convert bullet lists
-            formattedHTML = formattedHTML.replace(/([•\-\*]\s.*?)(?=\n[•\-\*]|\n\n|$)/gs, function(match) {
-                const items = match.split(/(?=[•\-\*])/);
-                let listHTML = '<ul>';
-                items.forEach(item => {
-                    const cleanItem = item.replace(/^[•\-\*]\s*/, '').trim();
-                    if (cleanItem) {
-                        listHTML += `<li>${cleanItem}</li>`;
-                    }
-                });
-                listHTML += '</ul>';
-                return listHTML;
-            });
+        // Helper function to create list HTML
+        function createList(items, type) {
+            if (items.length === 0) return '';
+            
+            const tag = type === 'ol' ? 'ol' : 'ul';
+            const listItems = items.map(item => `<li>${applyTextFormatting(item)}</li>`).join('');
+            return `<${tag}>${listItems}</${tag}>`;
+        }
 
-            // Intelligent content detection and styling
-            formattedHTML = detectAndStyleContent(formattedHTML);
-
-            return formattedHTML;
+        // Apply text formatting (bold, italic, code)
+        function applyTextFormatting(text) {
+            // Bold text **text** or __text__
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            
+            // Italic text *text* or _text_
+            text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+            
+            // Inline code `code`
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            return text;
         }
 
         // Detect and style special content types
         function detectAndStyleContent(html) {
-            // Precautions and warnings (red styling)
-            html = html.replace(/(precaution|warning|caution|danger|avoid|harmful|toxic|poisonous)[^.]*[.!]/gi, 
-                '<div class="precaution">$&</div>');
-
-            // Success/recommendations (green styling)
-            html = html.replace(/(recommend|suggestion|best practice|ideal|optimal|good|beneficial)[^.]*[.!]/gi, 
-                '<div class="recommendation">$&</div>');
-
-            // Important information (blue styling)
-            html = html.replace(/(note|important|remember|key point|tip)[^.]*[.!]/gi, 
-                '<div class="info">$&</div>');
-
             // Temperature, measurements, and numbers
             html = html.replace(/(\d+°[CF]|\d+\s*(?:degrees|°))/g, '<strong>$1</strong>');
             html = html.replace(/(\d+\s*(?:kg|g|lbs|pounds|tons|litres|liters|ml|gallons))/gi, '<strong>$1</strong>');
 
-            // Highlight crop names, diseases, and pests
+            // Highlight crop diseases and pests (case insensitive)
             html = html.replace(/\b(aphids?|thrips?|whiteflies?|spider mites?|caterpillars?|bollworm|cutworm|armyworm)\b/gi, 
                 '<span style="color: var(--danger-red); font-weight: bold;">$1</span>');
             
