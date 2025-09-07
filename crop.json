@@ -1,0 +1,177 @@
+[
+  {
+    "crop_name": "Rice",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 17000,
+    "water_requirement": "Very High",
+    "temperature": "25–32°C"
+  },
+  {
+    "crop_name": "Wheat",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 13500,
+    "water_requirement": "Medium",
+    "temperature": "10–15°C"
+  },
+  {
+    "crop_name": "Maize",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 11000,
+    "water_requirement": "High",
+    "temperature": "21–29°C"
+  },
+  {
+    "crop_name": "Barley",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 9000,
+    "water_requirement": "Low",
+    "temperature": "10–15°C"
+  },
+  {
+    "crop_name": "Oats",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 8000,
+    "water_requirement": "Medium",
+    "temperature": "10–20°C"
+  },
+  {
+    "crop_name": "Sorghum",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 9000,
+    "water_requirement": "Medium",
+    "temperature": "25–30°C"
+  },
+  {
+    "crop_name": "Millet",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 8500,
+    "water_requirement": "Low",
+    "temperature": "25–35°C"
+  },
+  {
+    "crop_name": "Soybean",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 12000,
+    "water_requirement": "Medium",
+    "temperature": "20–30°C"
+  },
+  {
+    "crop_name": "Potato",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 14000,
+    "water_requirement": "High",
+    "temperature": "15–20°C"
+  },
+  {
+    "crop_name": "Tomato",
+    "main_season": "Rabi/Summer",
+    "avg_cost_per_acre": 15000,
+    "water_requirement": "High",
+    "temperature": "20–25°C"
+  },
+  {
+    "crop_name": "Cotton",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 13000,
+    "water_requirement": "Medium",
+    "temperature": "21–30°C"
+  },
+  {
+    "crop_name": "Sugarcane",
+    "main_season": "Rabi/Kharif",
+    "avg_cost_per_acre": 18000,
+    "water_requirement": "Very High",
+    "temperature": "25–35°C"
+  },
+  {
+    "crop_name": "Groundnut (Peanut)",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 10000,
+    "water_requirement": "Medium",
+    "temperature": "25–35°C"
+  },
+  {
+    "crop_name": "Chickpea",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 7000,
+    "water_requirement": "Low",
+    "temperature": "20–25°C"
+  },
+  {
+    "crop_name": "Lentil",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 8000,
+    "water_requirement": "Low",
+    "temperature": "15–20°C"
+  },
+  {
+    "crop_name": "Mustard",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 6000,
+    "water_requirement": "Low",
+    "temperature": "10–20°C"
+  },
+  {
+    "crop_name": "Sunflower",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 12000,
+    "water_requirement": "Medium",
+    "temperature": "20–30°C"
+  },
+  {
+    "crop_name": "Sesame",
+    "main_season": "Kharif (Monsoon)",
+    "avg_cost_per_acre": 8000,
+    "water_requirement": "Low",
+    "temperature": "25–35°C"
+  },
+  {
+    "crop_name": "Tobacco",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 15000,
+    "water_requirement": "Medium",
+    "temperature": "20–30°C"
+  },
+  {
+    "crop_name": "Coffee",
+    "main_season": "Perennial",
+    "avg_cost_per_acre": 25000,
+    "water_requirement": "High",
+    "temperature": "15–25°C"
+  },
+  {
+    "crop_name": "Tea",
+    "main_season": "Perennial",
+    "avg_cost_per_acre": 30000,
+    "water_requirement": "High",
+    "temperature": "10–25°C"
+  },
+  {
+    "crop_name": "Cocoa",
+    "main_season": "Perennial",
+    "avg_cost_per_acre": 35000,
+    "water_requirement": "High",
+    "temperature": "20–30°C"
+  },
+  {
+    "crop_name": "Banana",
+    "main_season": "Perennial",
+    "avg_cost_per_acre": 20000,
+    "water_requirement": "Very High",
+    "temperature": "25–30°C"
+  },
+  {
+    "crop_name": "Mango",
+    "main_season": "Summer",
+    "avg_cost_per_acre": 25000,
+    "water_requirement": "Medium",
+    "temperature": "25–30°C"
+  },
+  {
+    "crop_name": "Papaya",
+    "main_season": "Perennial",
+    "avg_cost_per_acre": 15000,
+    "water_requirement": "High",
+    "temperature": "25–35°C"
+  }
+]

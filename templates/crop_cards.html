@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Information Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: #b0b0b0;
+            font-size: 1.1rem;
+        }
+
+        .crops-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .crop-card {
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crop-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .crop-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .crop-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 12px;
+            border: 2px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .crop-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .crop-details {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #b0b0b0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .detail-label::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .season-badge {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .cost-value {
+            color: #FFB74D;
+        }
+
+        .water-requirement {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .water-low { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+        .water-medium { background: rgba(255, 183, 77, 0.2); color: #FFB74D; }
+        .water-high { background: rgba(255, 152, 0, 0.2); color: #FF9800; }
+        .water-very-high { background: rgba(244, 67, 54, 0.2); color: #F44336; }
+
+        .temperature {
+            color: #81C784;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .crops-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌾 Crop Information Dashboard</h1>
+        <p>Comprehensive guide to agricultural crops with cultivation details</p>
+    </div>
+
+    <div class="crops-container" id="cropsContainer">
+        <!-- Cards will be generated by JavaScript -->
+    </div>
+
+    <script>
+        const cropsData = [
+            {
+                "crop_name": "Rice",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 17000,
+                "water_requirement": "Very High",
+                "temperature": "25–32°C"
+            },
+            {
+                "crop_name": "Wheat",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 13500,
+                "water_requirement": "Medium",
+                "temperature": "10–15°C"
+            },
+            {
+                "crop_name": "Maize",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 11000,
+                "water_requirement": "High",
+                "temperature": "21–29°C"
+            },
+            {
+                "crop_name": "Barley",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 9000,
+                "water_requirement": "Low",
+                "temperature": "10–15°C"
+            },
+            {
+                "crop_name": "Oats",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 8000,
+                "water_requirement": "Medium",
+                "temperature": "10–20°C"
+            },
+            {
+                "crop_name": "Sorghum",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 9000,
+                "water_requirement": "Medium",
+                "temperature": "25–30°C"
+            },
+            {
+                "crop_name": "Millet",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 8500,
+                "water_requirement": "Low",
+                "temperature": "25–35°C"
+            },
+            {
+                "crop_name": "Soybean",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 12000,
+                "water_requirement": "Medium",
+                "temperature": "20–30°C"
+            },
+            {
+                "crop_name": "Potato",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 14000,
+                "water_requirement": "High",
+                "temperature": "15–20°C"
+            },
+            {
+                "crop_name": "Tomato",
+                "main_season": "Rabi/Summer",
+                "avg_cost_per_acre": 15000,
+                "water_requirement": "High",
+                "temperature": "20–25°C"
+            },
+            {
+                "crop_name": "Cotton",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 13000,
+                "water_requirement": "Medium",
+                "temperature": "21–30°C"
+            },
+            {
+                "crop_name": "Sugarcane",
+                "main_season": "Rabi/Kharif",
+                "avg_cost_per_acre": 18000,
+                "water_requirement": "Very High",
+                "temperature": "25–35°C"
+            },
+            {
+                "crop_name": "Groundnut (Peanut)",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 10000,
+                "water_requirement": "Medium",
+                "temperature": "25–35°C"
+            },
+            {
+                "crop_name": "Chickpea",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 7000,
+                "water_requirement": "Low",
+                "temperature": "20–25°C"
+            },
+            {
+                "crop_name": "Lentil",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 8000,
+                "water_requirement": "Low",
+                "temperature": "15–20°C"
+            },
+            {
+                "crop_name": "Mustard",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 6000,
+                "water_requirement": "Low",
+                "temperature": "10–20°C"
+            },
+            {
+                "crop_name": "Sunflower",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 12000,
+                "water_requirement": "Medium",
+                "temperature": "20–30°C"
+            },
+            {
+                "crop_name": "Sesame",
+                "main_season": "Kharif (Monsoon)",
+                "avg_cost_per_acre": 8000,
+                "water_requirement": "Low",
+                "temperature": "25–35°C"
+            },
+            {
+                "crop_name": "Tobacco",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 15000,
+                "water_requirement": "Medium",
+                "temperature": "20–30°C"
+            },
+            {
+                "crop_name": "Coffee",
+                "main_season": "Perennial",
+                "avg_cost_per_acre": 25000,
+                "water_requirement": "High",
+                "temperature": "15–25°C"
+            },
+            {
+                "crop_name": "Tea",
+                "main_season": "Perennial",
+                "avg_cost_per_acre": 30000,
+                "water_requirement": "High",
+                "temperature": "10–25°C"
+            },
+            {
+                "crop_name": "Cocoa",
+                "main_season": "Perennial",
+                "avg_cost_per_acre": 35000,
+                "water_requirement": "High",
+                "temperature": "20–30°C"
+            },
+            {
+                "crop_name": "Banana",
+                "main_season": "Perennial",
+                "avg_cost_per_acre": 20000,
+                "water_requirement": "Very High",
+                "temperature": "25–30°C"
+            },
+            {
+                "crop_name": "Mango",
+                "main_season": "Summer",
+                "avg_cost_per_acre": 25000,
+                "water_requirement": "Medium",
+                "temperature": "25–30°C"
+            },
+            {
+                "crop_name": "Papaya",
+                "main_season": "Perennial",
+                "avg_cost_per_acre": 15000,
+                "water_requirement": "High",
+                "temperature": "25–35°C"
+            }
+        ];
+
+        const cropIcons = {
+            'Rice': '🌾',
+            'Wheat': '🌾',
+            'Maize': '🌽',
+            'Barley': '🌾',
+            'Oats': '🌾',
+            'Sorghum': '🌾',
+            'Millet': '🌾',
+            'Soybean': '🫘',
+            'Potato': '🥔',
+            'Tomato': '🍅',
+            'Cotton': '🌿',
+            'Sugarcane': '🎋',
+            'Groundnut (Peanut)': '🥜',
+            'Chickpea': '🫘',
+            'Lentil': '🫘',
+            'Mustard': '🌻',
+            'Sunflower': '🌻',
+            'Sesame': '🌾',
+            'Tobacco': '🚬',
+            'Coffee': '☕',
+            'Tea': '🍃',
+            'Cocoa': '🍫',
+            'Banana': '🍌',
+            'Mango': '🥭',
+            'Papaya': '🥭'
+        };
+
+        function getWaterClass(requirement) {
+            const req = requirement.toLowerCase();
+            if (req === 'low') return 'water-low';
+            if (req === 'medium') return 'water-medium';
+            if (req === 'high') return 'water-high';
+            if (req === 'very high') return 'water-very-high';
+            return 'water-medium';
+        }
+
+        function formatCurrency(amount) {
+            return '₹' + amount.toLocaleString('en-IN');
+        }
+
+        function generateCropCard(crop) {
+            const icon = cropIcons[crop.crop_name] || '🌱';
+            const waterClass = getWaterClass(crop.water_requirement);
+            
+            return `
+                <div class="crop-card">
+                    <div class="crop-header">
+                        <div class="crop-icon">${icon}</div>
+                        <div class="crop-name">${crop.crop_name}</div>
+                    </div>
+                    <div class="crop-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Season</span>
+                            <span class="detail-value season-badge">${crop.main_season}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Cost per Acre</span>
+                            <span class="detail-value cost-value">${formatCurrency(crop.avg_cost_per_acre)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Water Need</span>
+                            <span class="detail-value water-requirement ${waterClass}">${crop.water_requirement}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Temperature</span>
+                            <span class="detail-value temperature">${crop.temperature}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCrops() {
+            const container = document.getElementById('cropsContainer');
+            const cardsHTML = cropsData.map(generateCropCard).join('');
+            container.innerHTML = cardsHTML;
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', renderCrops);
+    </script>
+</body>
+</html>

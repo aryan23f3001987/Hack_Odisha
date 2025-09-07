@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropWise Resources - Educational Books & Tutorials</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a2332;
+            --secondary-dark: #2d3748;
+            --accent-green: #48bb78;
+            --accent-brown: #8b6914;
+            --text-light: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #4a5568;
+            --hover-bg: #3a4553;
+            --success-green: #38a169;
+            --warning-yellow: #f6e05e;
+            --danger-red: #fc8181;
+            --info-blue: #63b3ed;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(26, 35, 50, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-green);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--accent-green);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-brown));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: var(--hover-bg);
+            color: var(--accent-green);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="grain" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="%23ffffff" opacity="0.02"/></pattern></defs><rect width="100" height="20" fill="url(%23grain)"/></svg>');
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--text-light), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .search-section {
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            background: var(--primary-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            position: relative;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-green);
+            font-size: 1.2rem;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--accent-green), #38a169);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(72, 187, 120, 0.3);
+        }
+
+        .search-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .content-sections {
+            display: grid;
+            gap: 3rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--accent-green);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            font-size: 2.5rem;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .book-card {
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-brown));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-cover i {
+            font-size: 4rem;
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="book-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="20" fill="url(%23book-pattern)"/></svg>');
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-author {
+            color: var(--accent-green);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .book-year {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .read-btn {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .read-btn:hover {
+            background: var(--success-green);
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: var(--danger-red);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .guides-section {
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .guide-card {
+            background: var(--primary-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-green);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .guide-card:hover {
+            transform: translateX(5px);
+        }
+
+        .guide-icon {
+            font-size: 2rem;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .guide-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        footer {
+            background: var(--primary-dark);
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .header-content {
+                padding: 1rem;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-btn {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .guides-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .no-books {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 3rem;
+        }
+
+        .no-books i {
+            font-size: 4rem;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <h1>CropWise</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/#chat"><i class="fas fa-comments"></i> Chat</a></li>
+                    <li><a href="/resources"><i class="fas fa-book-open"></i> Resources</a></li>
+                    <li><a href="/weather"><i class="fas fa-cloud-sun-rain"></i> Weather</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h2><i class="fas fa-graduation-cap"></i> Learning Resources</h2>
+            <p>Discover educational books, research papers, and comprehensive guides to enhance your farming knowledge and improve your agricultural practices.</p>
+        </section>
+
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput"
+                        placeholder="Search for farming books (e.g., organic farming, soil management, pest control...)"
+                        value="crop farming"
+                    >
+                </div>
+                <button class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i> Search Books
+                </button>
+            </div>
+        </section>
+
+        <section class="content-sections">
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-book"></i>
+                    Educational Books
+                </h2>
+                
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 1rem; color: var(--text-muted);">Searching for books...</p>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorText">Failed to load books. Please try again.</span>
+                </div>
+
+                <div class="books-grid" id="booksGrid">
+                    <!-- Books will be loaded here -->
+                </div>
+
+                <div class="no-books" id="noBooks" style="display: none;">
+                    <i class="fas fa-book-open"></i>
+                    <h3>No books found</h3>
+                    <p>Try searching with different keywords</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="guides-section">
+            <h2 class="section-title">
+                <i class="fas fa-lightbulb"></i>
+                Quick Farming Tips
+            </h2>
+            
+            <div style="padding: 1rem; color: var(--text-muted); line-height: 1.8; font-size: 1rem;">
+                <p><strong style="color: var(--accent-green);">💡 Tip 1:</strong> Test your soil pH regularly - most crops thrive in slightly acidic to neutral soil (pH 6.0-7.0).</p>
+                <br>
+                <p><strong style="color: var(--accent-green);">💡 Tip 2:</strong> Water early in the morning to reduce evaporation and prevent fungal diseases.</p>
+                <br>
+                <p><strong style="color: var(--accent-green);">💡 Tip 3:</strong> Rotate your crops each season to prevent soil depletion and reduce pest buildup.</p>
+                <br>
+                <p><strong style="color: var(--accent-green);">💡 Tip 4:</strong> Use companion planting - grow basil with tomatoes, or plant marigolds to deter pests.</p>
+                <br>
+                <p><strong style="color: var(--accent-green);">💡 Tip 5:</strong> Mulch around plants to retain moisture, suppress weeds, and regulate soil temperature.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 CropWise. Empowering farmers with AI-driven agricultural insights.</p>
+        </div>
+    </footer>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
+        const booksGrid = document.getElementById('booksGrid');
+        const noBooks = document.getElementById('noBooks');
+
+        // Search for books
+        async function searchBooks() {
+            const query = searchInput.value.trim() || 'crop farming';
+            
+            // Show loading
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+            noBooks.style.display = 'none';
+            booksGrid.innerHTML = '';
+            searchBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+                
+                const response = await fetch('/get_books', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch books');
+                }
+
+                const books = await response.json();
+                displayBooks(books);
+
+            } catch (error) {
+                console.error('Error fetching books:', error);
+                errorMessage.style.display = 'block';
+                document.getElementById('errorText').textContent = 'Failed to load books. Please check your connection and try again.';
+            } finally {
+                loading.style.display = 'none';
+                searchBtn.disabled = false;
+            }
+        }
+
+        // Display books in grid
+        function displayBooks(books) {
+            if (!books || books.length === 0) {
+                noBooks.style.display = 'block';
+                return;
+            }
+
+            booksGrid.innerHTML = '';
+            
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                
+                bookCard.innerHTML = `
+                    <div class="book-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title || 'Untitled Book'}</div>
+                        <div class="book-author">
+                            <i class="fas fa-user"></i> ${book.author || 'Unknown Author'}
+                        </div>
+                        <div class="book-year">
+                            <i class="fas fa-calendar"></i> ${book.first_publish_year ? `Published: ${book.first_publish_year}` : 'Publication date unknown'}
+                        </div>
+                        <div class="book-actions">
+                            <a href="${book.read_url}" target="_blank" class="read-btn">
+                                <i class="fas fa-external-link-alt"></i> Read Online
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                booksGrid.appendChild(bookCard);
+            });
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', searchBooks);
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+
+        // Load initial books on page load
+        window.addEventListener('load', () => {
+            searchBooks();
+        });
+
+        // Guide cards are now display-only (no functionality)
+    </script>
+</body>
+</html>
