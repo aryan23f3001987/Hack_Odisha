@@ -186,6 +186,19 @@ The UI automatically detects and styles different types of content:
 | `/crop_cards` | GET | Crop cards interface |
 | `/resources` | GET | Educational resources |
 
+## 👥 Contributors
+
+We're grateful to the following contributors who made CropWise possible:
+
+<div align="center">
+
+| Developer | LinkedIn |
+|-----------|----------|
+| **Aryan Thakur** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/aryan-thakur-b3075a2ba/) |
+| **Shadan Zameer** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/zameershadan/) |
+
+</div>
+
 ## 🤝 Contributing
 
 We welcome contributions! Here's how you can help:
