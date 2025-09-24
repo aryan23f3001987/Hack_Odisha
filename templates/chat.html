@@ -39,7 +39,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -123,28 +123,43 @@
             line-height: 1.6;
         }
 
+        /* Main chat layout with two panels */
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
         .chat-container {
             background: var(--secondary-dark);
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            margin: 2rem 0;
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
 
-        .chat-header {
+        .image-panel {
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            height: fit-content;
+        }
+
+        .chat-header, .image-header {
             background: linear-gradient(135deg, var(--accent-green), var(--accent-brown));
             padding: 1.5rem;
             text-align: center;
         }
 
-        .chat-header h3 {
+        .chat-header h3, .image-header h3 {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: white;
         }
 
-        .chat-header p {
+        .chat-header p, .image-header p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.95rem;
         }
@@ -178,6 +193,7 @@
             line-height: 1.6;
             word-wrap: break-word;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
         }
 
         .user-message {
@@ -192,6 +208,149 @@
             color: var(--text-light);
             border-bottom-left-radius: 4px;
             border-left: 4px solid var(--accent-green);
+        }
+
+        /* Image upload area */
+        .image-upload-area {
+            padding: 2rem;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent-green);
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        .upload-zone i {
+            font-size: 3rem;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .upload-zone p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--accent-green), #38a169);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .crop-input-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .crop-input-section label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .crop-input-section input {
+            width: 100%;
+            background: var(--primary-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .crop-input-section input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .crop-input-section input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .analyze-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--info-blue), #4299e1);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 179, 237, 0.3);
+        }
+
+        .analyze-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .classification-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--primary-dark);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .classification-result h4 {
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .classification-result p {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
         }
 
         /* Enhanced formatting for bot messages */
@@ -218,7 +377,6 @@
             margin-bottom: 0;
         }
 
-        /* Strong text highlighting */
         .bot-message strong {
             color: var(--accent-green);
             font-weight: 600;
@@ -227,13 +385,11 @@
             border-radius: 3px;
         }
 
-        /* Emphasis styling */
         .bot-message em {
             color: var(--warning-yellow);
             font-style: italic;
         }
 
-        /* Code blocks */
         .bot-message code {
             background: var(--primary-dark);
             color: var(--info-blue);
@@ -244,7 +400,6 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Lists styling */
         .bot-message ul, .bot-message ol {
             margin: 1rem 0;
             padding-left: 0;
@@ -258,7 +413,6 @@
             position: relative;
         }
 
-        /* Bullet points */
         .bot-message ul li:before {
             content: '◆';
             position: absolute;
@@ -269,95 +423,14 @@
             font-size: 1.1em;
         }
 
-        /* Numbered lists */
-        .bot-message ol {
-            counter-reset: item;
-        }
-
-        .bot-message ol li {
-            counter-increment: item;
-        }
-
         .bot-message ol li:before {
-            content: counter(item) ".";
+            content: '◆';
             position: absolute;
             left: 0;
             top: 0;
             color: var(--accent-green);
             font-weight: bold;
             font-size: 1.1em;
-            background: rgba(72, 187, 120, 0.1);
-            padding: 2px 6px;
-            border-radius: 50%;
-            min-width: 1.5em;
-            text-align: center;
-        }
-
-        /* Special content types with color coding */
-        .precaution, .warning {
-            background: var(--warning-bg);
-            border-left: 4px solid var(--warning-yellow);
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .precaution:before, .warning:before {
-            content: '⚠️ ';
-            color: var(--warning-yellow);
-            font-weight: bold;
-        }
-
-        .danger, .alert {
-            background: var(--danger-bg);
-            border-left: 4px solid var(--danger-red);
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .danger:before, .alert:before {
-            content: '🚨 ';
-            color: var(--danger-red);
-            font-weight: bold;
-        }
-
-        .success, .recommendation {
-            background: var(--success-bg);
-            border-left: 4px solid var(--success-green);
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .success:before, .recommendation:before {
-            content: '✅ ';
-            color: var(--success-green);
-            font-weight: bold;
-        }
-
-        .info, .note {
-            background: var(--info-bg);
-            border-left: 4px solid var(--info-blue);
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .info:before, .note:before {
-            content: 'ℹ️ ';
-            color: var(--info-blue);
-            font-weight: bold;
-        }
-
-        /* Blockquotes */
-        .bot-message blockquote {
-            background: var(--primary-dark);
-            border-left: 4px solid var(--accent-green);
-            padding: 1rem;
-            margin: 1rem 0;
-            font-style: italic;
-            border-radius: 0 8px 8px 0;
         }
 
         .welcome-message {
@@ -458,6 +531,44 @@
             transform: none;
         }
 
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .image-loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -497,26 +608,6 @@
             line-height: 1.6;
         }
 
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--border-color);
-            border-radius: 50%;
-            border-top-color: var(--accent-green);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         footer {
             background: var(--primary-dark);
             padding: 3rem 0;
@@ -527,6 +618,16 @@
         .footer-content {
             text-align: center;
             color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .chat-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-panel {
+                order: -1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -560,22 +661,6 @@
                 max-width: 95%;
             }
         }
-
-        /* Animation for new messages */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message {
-            animation: slideIn 0.3s ease-out;
-        }
     </style>
 </head>
 <body>
@@ -599,42 +684,85 @@
     <div class="container">
         <section class="hero" id="home">
             <h2>Your Digital Farming Assistant</h2>
-            <p>Get expert advice on crop management, pest control, weather insights, and sustainable farming practices. Powered by AI to help you grow better crops.</p>
+            <p>Get expert advice on crop management, pest control, weather insights, and sustainable farming practices. Upload images for plant disease detection or chat directly with our AI assistant.</p>
         </section>
 
         <section id="chat">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <h3><i class="fas fa-robot"></i> CropWise Assistant</h3>
-                    <p>Ask me anything about farming, crops, soil, weather, or agricultural practices</p>
-                </div>
-                
-                <div class="chat-messages" id="chatMessages">
-                    <div class="welcome-message">
-                        <i class="fas fa-tractor"></i>
-                        <h4>Welcome to CropWise!</h4>
-                        <p>I'm here to help you with all your farming questions. Ask me about crop diseases, soil management, weather patterns, pest control, or any agricultural advice you need.</p>
+            <div class="chat-layout">
+                <!-- Main Chat Panel -->
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h3><i class="fas fa-robot"></i> CropWise Assistant</h3>
+                        <p>Ask me anything about farming, crops, soil, weather, or agricultural practices</p>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message">
+                            <i class="fas fa-tractor"></i>
+                            <h4>Welcome to CropWise!</h4>
+                            <p>I'm here to help you with all your farming questions. Ask me about crop diseases, soil management, weather patterns, pest control, or upload an image for plant disease detection.</p>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="loading">
+                        <div class="loading-spinner"></div>
+                        <span style="margin-left: 10px; color: var(--text-muted);">Getting your answer...</span>
+                    </div>
+
+                    <div class="input-container">
+                        <div class="input-group">
+                            <div class="input-field">
+                                <i class="fas fa-comment-dots input-icon"></i>
+                                <textarea 
+                                    id="messageInput" 
+                                    placeholder="Ask about crops, soil health, pest control, weather..."
+                                    rows="1"
+                                ></textarea>
+                            </div>
+                            <button class="send-btn" id="sendBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="loading" id="loading">
-                    <div class="loading-spinner"></div>
-                    <span style="margin-left: 10px; color: var(--text-muted);">Getting your answer...</span>
-                </div>
-
-                <div class="input-container">
-                    <div class="input-group">
-                        <div class="input-field">
-                            <i class="fas fa-comment-dots input-icon"></i>
-                            <textarea 
-                                id="messageInput" 
-                                placeholder="Ask about crops, soil health, pest control, weather..."
-                                rows="1"
-                            ></textarea>
+                <!-- Image Classification Panel -->
+                <div class="image-panel">
+                    <div class="image-header">
+                        <h3><i class="fas fa-camera"></i> Plant Disease Detection</h3>
+                        <p>Upload an image to identify plant diseases and get treatment advice</p>
+                    </div>
+                    
+                    <div class="image-upload-area">
+                        <div class="upload-zone" id="uploadZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop an image here</p>
+                            <button class="upload-btn" id="uploadBtn">Choose Image</button>
+                            <input type="file" id="fileInput" class="file-input" accept="image/*">
                         </div>
-                        <button class="send-btn" id="sendBtn">
-                            <i class="fas fa-paper-plane"></i>
+                        
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview">
+                        </div>
+                        
+                        <div class="crop-input-section">
+                            <label for="cropInput">Crop/Plant Name (Optional):</label>
+                            <input type="text" id="cropInput" placeholder="e.g., Tomato, Potato, Rice...">
+                        </div>
+                        
+                        <button class="analyze-btn" id="analyzeBtn" disabled>
+                            <i class="fas fa-search"></i> Analyze Image
                         </button>
+                        
+                        <div class="image-loading" id="imageLoading">
+                            <div class="loading-spinner"></div>
+                            <span style="margin-left: 10px;">Analyzing image...</span>
+                        </div>
+                        
+                        <div class="classification-result" id="classificationResult" style="display: none;">
+                            <h4>Analysis Result:</h4>
+                            <p id="resultText"></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -678,11 +806,119 @@
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
         const loading = document.getElementById('loading');
+        
+        // Image classification elements
+        const uploadZone = document.getElementById('uploadZone');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const cropInput = document.getElementById('cropInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const imageLoading = document.getElementById('imageLoading');
+        const classificationResult = document.getElementById('classificationResult');
+        const resultText = document.getElementById('resultText');
+
+        let selectedFile = null;
 
         // Auto-resize textarea
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Image upload functionality
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect({ target: { files } });
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    analyzeBtn.disabled = false;
+                    classificationResult.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Analyze image using your existing /detect_disease endpoint
+        analyzeBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            imageLoading.style.display = 'block';
+            analyzeBtn.disabled = true;
+            classificationResult.style.display = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                formData.append('crop', cropInput.value.trim() || 'Unknown');
+
+                const response = await fetch('/detect_disease', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Show classification result in the side panel
+                    resultText.innerHTML = `
+                        <strong>Crop:</strong> ${data.crop}<br>
+                        <strong>Detection:</strong> ${data.disease}
+                    `;
+                    classificationResult.style.display = 'block';
+
+                    // Hide welcome message if it exists
+                    const welcomeMessage = document.querySelector('.welcome-message');
+                    if (welcomeMessage) {
+                        welcomeMessage.style.display = 'none';
+                    }
+
+                    // Add user message to chat showing what was analyzed
+                    const userMessage = `Image Analysis: ${data.disease} detected in ${data.crop}`;
+                    addMessage(userMessage, 'user');
+
+                    // Add AI advice to chat
+                    addMessage(data.advice, 'bot');
+
+                } else {
+                    resultText.textContent = `Error: ${data.error}`;
+                    classificationResult.style.display = 'block';
+                }
+
+            } catch (error) {
+                resultText.textContent = `Error: Failed to analyze image`;
+                classificationResult.style.display = 'block';
+                console.error('Error:', error);
+            } finally {
+                imageLoading.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
         });
 
         // Improved text formatting function
@@ -866,7 +1102,7 @@
             try {
                 const formData = new FormData();
                 formData.append('msg', message);
-                formData.append('username', 'user'); // Add username if needed
+                formData.append('username', 'user');
                 
                 const response = await fetch('/get', {
                     method: 'POST',

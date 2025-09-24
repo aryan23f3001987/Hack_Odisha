@@ -18,6 +18,11 @@ load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+HF_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
+HF_API_URL = "https://api-inference.huggingface.co/models/linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification"
+
+if not HF_API_KEY:
+    raise ValueError("HUGGINGFACE_API_KEY is not set in your .env file!")
 
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY or ""
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY or ""
@@ -117,6 +122,28 @@ def get_weather():
 
 
 # ------------------ Book Routes (Open Library) ------------------ #
+# @app.route("/get_books", methods=["POST"])
+# def get_books():
+#     query = request.form.get("query", "crop farming")
+#     url = f"https://openlibrary.org/search.json?q={query}&limit=12"
+#     try:
+#         res = requests.get(url, timeout=5)
+#         data = res.json()
+#         books = []
+#         for doc in data.get("docs", []):
+#             books.append({
+#                 "title": doc.get("title"),
+#                 "author": ", ".join(doc.get("author_name", [])),
+#                 "first_publish_year": doc.get("first_publish_year"),
+#                 "read_url": f"https://openlibrary.org{doc.get('key')}?embed=true"
+#             })
+#         return jsonify(books)
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+
+import json
+
 @app.route("/get_books", methods=["POST"])
 def get_books():
     query = request.form.get("query", "crop farming")
@@ -126,20 +153,51 @@ def get_books():
         data = res.json()
         books = []
         for doc in data.get("docs", []):
+            # Build cover URL if cover_i exists, else use placeholder
+            cover_url = f"https://covers.openlibrary.org/b/id/{doc['cover_i']}-M.jpg" if doc.get('cover_i') else '/static/placeholder.jpg'
+
             books.append({
                 "title": doc.get("title"),
                 "author": ", ".join(doc.get("author_name", [])),
                 "first_publish_year": doc.get("first_publish_year"),
-                "read_url": f"https://openlibrary.org{doc.get('key')}?embed=true"
+                "read_url": f"https://openlibrary.org{doc.get('key')}?embed=true",
+                "cover_url": cover_url
             })
         return jsonify(books)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# ------------------ YouTube Routes ------------------ #
+import re
+@app.route("/get_videos", methods=["POST"])
+def get_videos():
+    user_query = request.form.get("query", "")
+    api_key = os.getenv("YOUTUBE_API_KEY")
 
+    if not api_key:
+        return jsonify({"error": "Missing YOUTUBE_API_KEY"}), 500
 
-import json
+    # Single search.list call for medium videos only
+    search_url = (
+        "https://www.googleapis.com/youtube/v3/search"
+        f"?part=snippet&type=video&maxResults=50&q={user_query}&videoDuration=medium&key={api_key}"
+    )
+    search_res = requests.get(search_url, timeout=5).json()
 
-# ------------------ Crop Routes ------------------ #
+    videos = []
+    for item in search_res.get("items", []):
+        videos.append({
+            "title": item["snippet"]["title"],
+            "channel": item["snippet"]["channelTitle"],
+            "thumbnail": item["snippet"]["thumbnails"]["medium"]["url"],
+            "video_url": f"https://www.youtube.com/embed/{item['id']['videoId']}"
+        })
+
+    # Limit to 12 videos for your frontend
+    videos = videos[:12]
+
+    return jsonify(videos)
+
 @app.route("/get_crops", methods=["GET"])
 def get_crops():
     # Load the static crops.json file
@@ -154,12 +212,60 @@ def get_crops():
 def crop_cards_page():
     return render_template("crop_cards.html")
 
+@app.route("/detect_disease", methods=["POST"])
+def detect_disease():
+    try:
+        # Get uploaded file and crop name
+        image = request.files.get("image")
+        crop_name = request.form.get("crop")
+
+        if not image or not crop_name:
+            return jsonify({"error": "Please provide both an image and a crop name"}), 400
+
+        # Read image as bytes
+        image_bytes = image.read()
+
+        # Send POST request to Hugging Face
+        headers = {
+            "Authorization": f"Bearer {HF_API_KEY}",
+            "Content-Type": "application/octet-stream"
+        }
+        res = requests.post(HF_API_URL, headers=headers, data=image_bytes)
+
+        if res.status_code != 200:
+            return jsonify({"error": f"Hugging Face API error: {res.text}"}), res.status_code
+
+        result = res.json()
+        if not isinstance(result, list) or len(result) == 0:
+            return jsonify({"error": "No prediction returned"}), 500
+
+        # Get top class and remove crop prefix if needed
+        top_class = result[0]["label"]
+        disease_name = top_class.split("with")[-1].strip() if "with" in top_class else top_class
+
+        # Prepare hidden prompt for chatbot
+        hidden_prompt = f"Crop: {crop_name}\nDisease: {disease_name}\n\nGive a short treatment advice."
+        response = chatModel.invoke(hidden_prompt)
+        advice = response.content
+
+        # Return top 5 predictions as well
+        top5 = [{"label": r["label"], "score": r["score"]} for r in sorted(result, key=lambda x: x["score"], reverse=True)[:5]]
+
+        return jsonify({
+            "crop": crop_name,
+            "disease": disease_name,
+            "advice": advice,
+            "top5_predictions": top5
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # ------------------ Optional Resources Page ------------------ #
 @app.route("/resources")
 def resources_page():
     return render_template("resources.html")
-
 
 # ------------------ Run Server ------------------ #
 if __name__ == "__main__":

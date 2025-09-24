@@ -11,3 +11,4 @@ langchain-community==0.3.26
 openai>=1.40.0
 langchain-groq
 gunicorn==21.2.0
+matplotlib

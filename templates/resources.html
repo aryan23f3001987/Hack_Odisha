@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CropWise Resources - Educational Books & Tutorials</title>
+    <title>Cultivio Resources - Educational Books & Video Tutorials</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -25,6 +25,7 @@
             --warning-yellow: #f6e05e;
             --danger-red: #fc8181;
             --info-blue: #63b3ed;
+            --accent-red: #e53e3e;
         }
 
         body {
@@ -119,6 +120,11 @@
             line-height: 1.6;
         }
 
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 4rem;
+        }
+
         .search-section {
             background: var(--secondary-dark);
             border-radius: 16px;
@@ -141,11 +147,12 @@
             background: var(--primary-dark);
             border: 2px solid var(--border-color);
             border-radius: 12px;
-            padding: 1rem 1rem 1rem 3rem;
+            padding: 1rem; /* UPDATED: Removed extra left padding */
             color: var(--text-light);
             font-size: 1rem;
             transition: border-color 0.3s ease;
             position: relative;
+            text-align: left; 
         }
 
         .search-input:focus {
@@ -162,14 +169,7 @@
             position: relative;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-green);
-            font-size: 1.2rem;
-        }
+        /* REMOVED .search-icon as it's no longer used */
 
         .search-btn {
             background: linear-gradient(135deg, var(--accent-green), #38a169);
@@ -214,6 +214,24 @@
             font-size: 2.5rem;
         }
 
+        /* Note for Book Section */
+        .info-note {
+            text-align: center;
+            color: var(--text-muted);
+            background-color: rgba(0,0,0,0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin: -1rem auto 1.5rem auto;
+            max-width: 80%;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        .info-note i {
+            color: var(--info-blue);
+            margin-right: 0.5rem;
+        }
+
+        /* Books Styles */
         .books-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -226,7 +244,6 @@
             border-radius: 16px;
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
             overflow: hidden;
         }
 
@@ -235,31 +252,55 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
 
-        .book-cover {
-            width: 100%;
+        /* Common Book Cover Styles */
+        .common-book-cover {
             height: 200px;
-            background: linear-gradient(135deg, var(--accent-green), var(--accent-brown));
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(45deg, #5d4037, #4e342e); 
+            border-radius: 4px 8px 8px 4px; 
             position: relative;
-            overflow: hidden;
+            font-family: 'Times New Roman', serif; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 5px 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #f5e8d7; 
+            text-align: center;
+            padding: 20px;
         }
 
-        .book-cover i {
-            font-size: 4rem;
-            color: var(--text-light);
-            opacity: 0.8;
-        }
-
-        .book-cover::after {
+        .common-book-cover::before {
             content: '';
             position: absolute;
-            top: 0;
             left: 0;
-            right: 0;
+            top: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="book-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="20" fill="url(%23book-pattern)"/></svg>');
+            width: 20px; 
+            background: linear-gradient(to right, #3e2723, #4e342e); 
+            border-right: 2px solid #2d1c18;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .cover-icon {
+            font-size: 3rem;
+            color: var(--accent-green);
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .cover-title-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(245, 232, 215, 0.5);
+            border-bottom: 1px solid rgba(245, 232, 215, 0.5);
+            padding: 0.5rem 0;
+        }
+
+        .cover-author-text {
+            font-size: 1rem;
+            margin-top: 1rem;
+            font-style: italic;
         }
 
         .book-info {
@@ -316,6 +357,112 @@
             transform: translateY(-1px);
         }
 
+        /* Videos Styles */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .video-card {
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            background: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .play-overlay {
+            background: var(--accent-red);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .video-info {
+            padding: 1.5rem;
+        }
+
+        .video-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-channel {
+            color: var(--accent-green);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .watch-btn {
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .watch-btn:hover {
+            background: linear-gradient(135deg, #cc0000, #990000);
+            transform: translateY(-1px);
+        }
+
         .loading {
             display: none;
             text-align: center;
@@ -346,51 +493,86 @@
             display: none;
         }
 
+        .no-content {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 3rem;
+            display: none;
+        }
+
+        .no-content i {
+            font-size: 4rem;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 2% auto;
+            width: 90%;
+            max-width: 1000px;
+            background: var(--secondary-dark);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--primary-dark);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--danger-red);
+        }
+
+        .modal-body {
+            height: 70vh;
+            overflow: hidden;
+        }
+
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         .guides-section {
             background: var(--secondary-dark);
             border-radius: 16px;
             padding: 2rem;
             border: 1px solid var(--border-color);
             margin-top: 3rem;
-        }
-
-        .guides-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .guide-card {
-            background: var(--primary-dark);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border-left: 4px solid var(--accent-green);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .guide-card:hover {
-            transform: translateX(5px);
-        }
-
-        .guide-icon {
-            font-size: 2rem;
-            color: var(--accent-green);
-            margin-bottom: 1rem;
-        }
-
-        .guide-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .guide-description {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.5;
         }
 
         footer {
@@ -426,25 +608,23 @@
                 width: 100%;
             }
             
-            .books-grid {
+            .books-grid, .videos-grid {
                 grid-template-columns: 1fr;
             }
             
-            .guides-grid {
-                grid-template-columns: 1fr;
+            .tabs {
+                flex-direction: column;
+                align-items: center;
             }
-        }
-
-        .no-books {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 3rem;
-        }
-
-        .no-books i {
-            font-size: 4rem;
-            color: var(--accent-green);
-            margin-bottom: 1rem;
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-body {
+                height: 60vh;
+            }
         }
     </style>
 </head>
@@ -453,7 +633,7 @@
         <div class="header-content">
             <div class="logo">
                 <i class="fas fa-seedling"></i>
-                <h1>CropWise</h1>
+                <h1>Cultivio</h1>
             </div>
             <nav>
                 <ul class="nav-links">
@@ -469,53 +649,97 @@
     <div class="container">
         <section class="hero">
             <h2><i class="fas fa-graduation-cap"></i> Learning Resources</h2>
-            <p>Discover educational books, research papers, and comprehensive guides to enhance your farming knowledge and improve your agricultural practices.</p>
+            <p>Discover educational books, video tutorials, and comprehensive guides to enhance your farming knowledge and improve your agricultural practices.</p>
         </section>
 
-        <section class="search-section">
-            <div class="search-container">
-                <div class="search-wrapper">
-                    <i class="fas fa-search search-icon"></i>
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        id="searchInput"
-                        placeholder="Search for farming books (e.g., organic farming, soil management, pest control...)"
-                        value="crop farming"
-                    >
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fab fa-youtube"></i>
+                Video Tutorials
+            </h2>
+            
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            id="videoSearchInput"
+                            placeholder="Search for farming videos (e.g., irrigation techniques...)"
+                            value="farming techniques"
+                        >
+                    </div>
+                    <button class="search-btn" id="videoSearchBtn">
+                        <i class="fab fa-youtube"></i> Search Videos
+                    </button>
                 </div>
-                <button class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i> Search Books
-                </button>
+            </div>
+
+            <div class="loading" id="videoLoading">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 1rem; color: var(--text-muted);">Searching for videos...</p>
+            </div>
+
+            <div class="error-message" id="videoError">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="videoErrorText">Failed to load videos. Please try again.</span>
+            </div>
+
+            <div class="videos-grid" id="videosGrid">
+                </div>
+
+            <div class="no-content" id="noVideos">
+                <i class="fab fa-youtube"></i>
+                <h3>No videos found</h3>
+                <p>Try searching with different keywords</p>
             </div>
         </section>
 
-        <section class="content-sections">
-            <div>
-                <h2 class="section-title">
-                    <i class="fas fa-book"></i>
-                    Educational Books
-                </h2>
-                
-                <div class="loading" id="loading">
-                    <div class="loading-spinner"></div>
-                    <p style="margin-top: 1rem; color: var(--text-muted);">Searching for books...</p>
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-book"></i>
+                Educational Books
+            </h2>
+            
+            <div class="info-note">
+                <i class="fas fa-info-circle"></i>
+                Note: You may need a free Open Library account to read or borrow these books.
+            </div>
+
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            id="bookSearchInput"
+                            placeholder="Search for farming books (e.g., soil management...)"
+                            value="crop farming"
+                        >
+                    </div>
+                    <button class="search-btn" id="bookSearchBtn">
+                        <i class="fas fa-search"></i> Search Books
+                    </button>
+                </div>
+            </div>
+
+            <div class="loading" id="bookLoading">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 1rem; color: var(--text-muted);">Searching for books...</p>
+            </div>
+
+            <div class="error-message" id="bookError">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="bookErrorText">Failed to load books. Please try again.</span>
+            </div>
+
+            <div class="books-grid" id="booksGrid">
                 </div>
 
-                <div class="error-message" id="errorMessage">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span id="errorText">Failed to load books. Please try again.</span>
-                </div>
-
-                <div class="books-grid" id="booksGrid">
-                    <!-- Books will be loaded here -->
-                </div>
-
-                <div class="no-books" id="noBooks" style="display: none;">
-                    <i class="fas fa-book-open"></i>
-                    <h3>No books found</h3>
-                    <p>Try searching with different keywords</p>
-                </div>
+            <div class="no-content" id="noBooks">
+                <i class="fas fa-book-open"></i>
+                <h3>No books found</h3>
+                <p>Try searching with different keywords</p>
             </div>
         </section>
 
@@ -539,30 +763,56 @@
         </section>
     </div>
 
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Content Viewer</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="modalFrame" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 CropWise. Empowering farmers with AI-driven agricultural insights.</p>
+            <p>&copy; 2025 Cultivio. Empowering farmers with AI-driven agricultural insights.</p>
         </div>
     </footer>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const loading = document.getElementById('loading');
-        const errorMessage = document.getElementById('errorMessage');
+        // Books functionality
+        const bookSearchInput = document.getElementById('bookSearchInput');
+        const bookSearchBtn = document.getElementById('bookSearchBtn');
+        const bookLoading = document.getElementById('bookLoading');
+        const bookError = document.getElementById('bookError');
         const booksGrid = document.getElementById('booksGrid');
         const noBooks = document.getElementById('noBooks');
 
+        // Videos functionality
+        const videoSearchInput = document.getElementById('videoSearchInput');
+        const videoSearchBtn = document.getElementById('videoSearchBtn');
+        const videoLoading = document.getElementById('videoLoading');
+        const videoError = document.getElementById('videoError');
+        const videosGrid = document.getElementById('videosGrid');
+        const noVideos = document.getElementById('noVideos');
+
+        // Modal functionality
+        const modal = document.getElementById('contentModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalFrame = document.getElementById('modalFrame');
+        const closeModal = document.getElementById('closeModal');
+
         // Search for books
         async function searchBooks() {
-            const query = searchInput.value.trim() || 'crop farming';
+            const query = bookSearchInput.value.trim() || 'crop farming';
             
-            // Show loading
-            loading.style.display = 'block';
-            errorMessage.style.display = 'none';
+            bookLoading.style.display = 'block';
+            bookError.style.display = 'none';
             noBooks.style.display = 'none';
             booksGrid.innerHTML = '';
-            searchBtn.disabled = true;
+            bookSearchBtn.disabled = true;
 
             try {
                 const formData = new FormData();
@@ -582,11 +832,47 @@
 
             } catch (error) {
                 console.error('Error fetching books:', error);
-                errorMessage.style.display = 'block';
-                document.getElementById('errorText').textContent = 'Failed to load books. Please check your connection and try again.';
+                bookError.style.display = 'block';
+                document.getElementById('bookErrorText').textContent = 'Failed to load books. Please check your connection and try again.';
             } finally {
-                loading.style.display = 'none';
-                searchBtn.disabled = false;
+                bookLoading.style.display = 'none';
+                bookSearchBtn.disabled = false;
+            }
+        }
+
+        // Search for videos
+        async function searchVideos() {
+            const query = videoSearchInput.value.trim() || 'farming techniques';
+            
+            videoLoading.style.display = 'block';
+            videoError.style.display = 'none';
+            noVideos.style.display = 'none';
+            videosGrid.innerHTML = '';
+            videoSearchBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+                
+                const response = await fetch('/get_videos', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch videos');
+                }
+
+                const videos = await response.json();
+                displayVideos(videos);
+
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+                videoError.style.display = 'block';
+                document.getElementById('videoErrorText').textContent = 'Failed to load videos. Please check your connection and try again.';
+            } finally {
+                videoLoading.style.display = 'none';
+                videoSearchBtn.disabled = false;
             }
         }
 
@@ -603,9 +889,12 @@
                 const bookCard = document.createElement('div');
                 bookCard.className = 'book-card';
                 
+                // Use the common book cover for all books
                 bookCard.innerHTML = `
-                    <div class="book-cover">
-                        <i class="fas fa-book-open"></i>
+                    <div class="common-book-cover">
+                        <i class="fas fa-seedling cover-icon"></i>
+                        <div class="cover-title-text">Farming Wisdom</div>
+                        <div class="cover-author-text">A Cultivio Guide</div>
                     </div>
                     <div class="book-info">
                         <div class="book-title">${book.title || 'Untitled Book'}</div>
@@ -616,9 +905,9 @@
                             <i class="fas fa-calendar"></i> ${book.first_publish_year ? `Published: ${book.first_publish_year}` : 'Publication date unknown'}
                         </div>
                         <div class="book-actions">
-                            <a href="${book.read_url}" target="_blank" class="read-btn">
-                                <i class="fas fa-external-link-alt"></i> Read Online
-                            </a>
+                            <button class="read-btn" onclick="openModal('${book.title.replace(/'/g, "\\'")}', '${book.read_url}')">
+                                <i class="fas fa-book-reader"></i> Read Now
+                            </button>
                         </div>
                     </div>
                 `;
@@ -627,21 +916,92 @@
             });
         }
 
+        // Display videos in grid
+        function displayVideos(videos) {
+            if (!videos || videos.length === 0) {
+                noVideos.style.display = 'block';
+                return;
+            }
+
+            videosGrid.innerHTML = '';
+            
+            videos.forEach(video => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                
+                videoCard.innerHTML = `
+                    <div class="video-thumbnail">
+                        <img src="${video.thumbnail}" alt="${video.title}">
+                        <div class="play-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-channel">
+                            <i class="fab fa-youtube"></i> ${video.channel}
+                        </div>
+                        <button class="watch-btn" onclick="openModal('${video.title.replace(/'/g, "\\'")}', '${video.video_url}')">
+                            <i class="fas fa-play"></i> Watch Now
+                        </button>
+                    </div>
+                `;
+                
+                videosGrid.appendChild(videoCard);
+            });
+        }
+
+        // Modal functions
+        function openModal(title, url) {
+            modalTitle.textContent = title;
+            modalFrame.src = url;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalFunction() {
+            modal.style.display = 'none';
+            modalFrame.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
         // Event listeners
-        searchBtn.addEventListener('click', searchBooks);
+        bookSearchBtn.addEventListener('click', searchBooks);
+        videoSearchBtn.addEventListener('click', searchVideos);
         
-        searchInput.addEventListener('keypress', function(e) {
+        bookSearchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchBooks();
             }
         });
 
-        // Load initial books on page load
-        window.addEventListener('load', () => {
-            searchBooks();
+        videoSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchVideos();
+            }
         });
 
-        // Guide cards are now display-only (no functionality)
+        closeModal.addEventListener('click', closeModalFunction);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModalFunction();
+            }
+        });
+
+        // Close modal with escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModalFunction();
+            }
+        });
+
+        // Load initial content on page load
+        window.addEventListener('load', () => {
+            searchBooks();
+            searchVideos();
+        });
     </script>
 </body>
 </html>
