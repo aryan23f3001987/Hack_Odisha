@@ -239,8 +239,19 @@ def detect_disease():
         if not isinstance(result, list) or len(result) == 0:
             return jsonify({"error": "No prediction returned"}), 500
 
+        # Check top prediction score
+        top_prediction = max(result, key=lambda x: x["score"])
+        if top_prediction["score"] < 0.5:
+            advice = "Can't confidently guess the disease. Maybe try uploading a clearer picture."
+            return jsonify({
+                "crop": crop_name,
+                "disease": None,
+                "advice": advice,
+                "top5_predictions": [{"label": r["label"], "score": r["score"]} for r in result[:5]]
+            })
+
         # Get top class and remove crop prefix if needed
-        top_class = result[0]["label"]
+        top_class = top_prediction["label"]
         disease_name = top_class.split("with")[-1].strip() if "with" in top_class else top_class
 
         # Prepare hidden prompt for chatbot
@@ -248,7 +259,7 @@ def detect_disease():
         response = chatModel.invoke(hidden_prompt)
         advice = response.content
 
-        # Return top 5 predictions as well
+        # Return top 5 predictions
         top5 = [{"label": r["label"], "score": r["score"]} for r in sorted(result, key=lambda x: x["score"], reverse=True)[:5]]
 
         return jsonify({
@@ -260,6 +271,7 @@ def detect_disease():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 # ------------------ Optional Resources Page ------------------ #
