@@ -4,6 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cultivio - Your Farming Assistant</title>
+    
+    <script type="module">
+        // Import the functions you need from the modern SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        // Import signOut along with the other auth functions
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6Szch7lVEcfwHDU5e1Hi36MaRxN_-5vY",
+            authDomain: "cultivio-e9741.firebaseapp.com",
+            projectId: "cultivio-e9741",
+            storageBucket: "cultivio-e9741.appspot.com",
+            messagingSenderId: "885328104567",
+            appId: "1:885328104567:web:0ce74325dbf11e8a4c8a72",
+            measurementId: "G-XPCBK8L7QD"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // This checks if the user is logged in and protects the page
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // No user is signed in, redirect them to the login page.
+                window.location.href = "/login";
+            }
+        });
+
+        // Add logout functionality after the page content has loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent the link from navigating
+                    signOut(auth).then(() => {
+                        // Sign-out successful.
+                        console.log('User signed out successfully.');
+                        window.location.href = '/login'; // Redirect to login page
+                    }).catch((error) => {
+                        // An error happened.
+                        console.error('Sign out error:', error);
+                    });
+                });
+            }
+        });
+    </script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -676,6 +725,8 @@
                     <li><a href="#chat"><i class="fas fa-comments"></i> Chat</a></li>
                     <li><a href="#features"><i class="fas fa-leaf"></i> Features</a></li>
                     <li><a href="/weather"><i class="fas fa-cloud-sun-rain"></i> Weather</a></li>
+                    <li><a href="/market_prices"><i class="fas fa-chart-line"></i> Market Prices</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
@@ -689,7 +740,6 @@
 
         <section id="chat">
             <div class="chat-layout">
-                <!-- Main Chat Panel -->
                 <div class="chat-container">
                     <div class="chat-header">
                         <h3><i class="fas fa-robot"></i> CropWise Assistant</h3>
@@ -726,7 +776,6 @@
                     </div>
                 </div>
 
-                <!-- Image Classification Panel -->
                 <div class="image-panel">
                     <div class="image-header">
                         <h3><i class="fas fa-camera"></i> Plant Disease Detection</h3>
@@ -791,6 +840,14 @@
                 </div>
                 <h4>Crop Cards</h4>
                 <p>Explore detailed information about various crops including growing seasons, water requirements, temperature needs, and average costs.</p>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/market_prices'">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4>Market Prices</h4>
+                <p>Track real-time agricultural market prices, analyze trends, and make informed decisions about crop sales and purchases.</p>
             </div>
         </section>
     </div>

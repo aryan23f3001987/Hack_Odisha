@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices - Cultivio</title>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6Szch7lVEcfwHDU5e1Hi36MaRxN_-5vY",
+            authDomain: "cultivio-e9741.firebaseapp.com",
+            projectId: "cultivio-e9741",
+            storageBucket: "cultivio-e9741.appspot.com",
+            messagingSenderId: "885328104567",
+            appId: "1:885328104567:web:0ce74325dbf11e8a4c8a72",
+            measurementId: "G-XPCBK8L7QD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "/login";
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    signOut(auth).then(() => {
+                        window.location.href = '/login';
+                    }).catch((error) => {
+                        console.error('Sign out error:', error);
+                    });
+                });
+            }
+        });
+    </script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a2332;
+            --secondary-dark: #2d3748;
+            --accent-green: #48bb78;
+            --accent-brown: #8b6914;
+            --text-light: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #4a5568;
+            --hover-bg: #3a4553;
+            --success-green: #38a169;
+            --warning-yellow: #f6e05e;
+            --danger-red: #fc8181;
+            --info-blue: #63b3ed;
+            --chart-bg: #374151;
+            --card-bg: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(26, 35, 50, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-green);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--accent-green);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-brown));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: var(--hover-bg);
+            color: var(--accent-green);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-brown));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .controls-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .control-group select,
+        .control-group input {
+            background: var(--primary-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--accent-green), #38a169);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        .chart-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 1rem 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .price-increase {
+            color: var(--success-green);
+        }
+
+        .price-decrease {
+            color: var(--danger-red);
+        }
+
+        .price-stable {
+            color: var(--warning-yellow);
+        }
+
+        .popular-crops {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .crop-button {
+            background: var(--primary-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .crop-button:hover {
+            border-color: var(--accent-green);
+            background: var(--hover-bg);
+        }
+
+        .crop-button.active {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+
+        .crop-button i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-green);
+        }
+
+        .crop-button.active i {
+            color: white;
+        }
+
+        .market-table {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .market-table h3 {
+            color: var(--accent-green);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--primary-dark);
+            color: var(--accent-green);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-light);
+        }
+
+        tr:hover {
+            background: var(--hover-bg);
+        }
+
+        .error-message {
+            background: var(--danger-red);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .map-container {
+            position: relative;
+            height: 500px;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #india-map-svg {
+            max-width: 100%;
+            max-height: 100%;
+            stroke: #1a2332;
+            stroke-width: 0.5;
+        }
+
+        .state-path {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            fill: #4a5568;
+        }
+
+        .state-path:hover {
+            stroke: var(--accent-green);
+            stroke-width: 1.5;
+            filter: brightness(1.3);
+        }
+
+        .price-scale {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .scale-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .scale-colors {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .scale-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .scale-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .map-tooltip {
+            position: absolute;
+            background: rgba(26, 35, 50, 0.98);
+            border: 2px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            min-width: 220px;
+            max-width: 300px;
+        }
+
+        .map-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip-header {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tooltip-header strong {
+            color: var(--accent-green);
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .tooltip-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tooltip-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            align-items: center;
+        }
+
+        .tooltip-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .tooltip-item span:last-child {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+            
+            .map-container {
+                height: 350px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .crops-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <h1>Cultivio</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/chat"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/chat"><i class="fas fa-comments"></i> Chat</a></li>
+                    <li><a href="/weather"><i class="fas fa-cloud-sun-rain"></i> Weather</a></li>
+                    <li><a href="/crop_cards"><i class="fas fa-leaf"></i> Crops</a></li>
+                    <li><a href="/resources"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-chart-line"></i> Market Prices</h2>
+            <p>Real-time agricultural market prices, trends, and analytics to help you make informed farming and trading decisions</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+             <div class="stat-card">
+                <div class="stat-icon" id="trendIcon"><i class="fas fa-minus"></i></div>
+                <div class="stat-value" id="trendText">Stable</div>
+                <div class="stat-label">Overall Trend</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--info-blue);"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-value" id="avgPrice">₹0</div>
+                <div class="stat-label">Latest Average Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--accent-green);"><i class="fas fa-store"></i></div>
+                <div class="stat-value" id="totalMarkets">0</div>
+                <div class="stat-label">Active Markets</div>
+            </div>
+             <div class="stat-card">
+                <div class="stat-icon" style="color: var(--warning-yellow);"><i class="fas fa-database"></i></div>
+                <div class="stat-value" id="totalRecords">0</div>
+                <div class="stat-label">Data Records Found</div>
+            </div>
+        </div>
+
+        <div class="popular-crops">
+            <h3><i class="fas fa-star"></i> Popular Crops</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">Click on a crop to view its market trends</p>
+            <div class="crops-grid" id="cropButtons">
+                <div class="crop-button active" data-crop="Paddy">
+                    <i class="fas fa-seedling"></i>
+                    <div>Rice</div>
+                </div>
+                <div class="crop-button" data-crop="Wheat">
+                    <i class="fas fa-wheat-awn"></i>
+                    <div>Wheat</div>
+                </div>
+                <div class="crop-button" data-crop="Maize">
+                    <i class="fas fa-leaf"></i>
+                    <div>Maize</div>
+                </div>
+                <div class="crop-button" data-crop="Tomato">
+                    <i class="fas fa-apple-whole"></i>
+                    <div>Tomato</div>
+                </div>
+                <div class="crop-button" data-crop="Onion">
+                    <i class="fas fa-circle"></i>
+                    <div>Onion</div>
+                </div>
+                <div class="crop-button" data-crop="Potato">
+                    <i class="fas fa-mountain"></i>
+                    <div>Potato</div>
+                </div>
+                <div class="crop-button" data-crop="Soya Bean">
+                    <i class="fas fa-leaf"></i>
+                    <div>Soybean</div>
+                </div>
+                <div class="crop-button" data-crop="Cotton">
+                    <i class="fas fa-cloud"></i>
+                    <div>Cotton</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 1.5rem; color: var(--accent-green);"><i class="fas fa-filter"></i> Search & Filter</h3>
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label for="cropSearch">Search Crop</label>
+                    <input type="text" id="cropSearch" placeholder="Enter crop name...">
+                </div>
+                <div class="control-group">
+                    <label for="stateFilter">State</label>
+                    <select id="stateFilter">
+                        <option value="">All States</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="marketFilter">Market</label>
+                    <select id="marketFilter">
+                        <option value="">All Markets</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i> Search Prices
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Price Trends</h3>
+                        <p class="chart-subtitle">Recent price movement for selected crop</p>
+                    </div>
+                    <div class="chart-legend" id="chartLegend"></div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+                <div class="loading" id="chartLoading">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 1rem;">Loading market data...</p>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Regional Price Map</h3>
+                        <p class="chart-subtitle">Hover over states to view current prices</p>
+                    </div>
+                    <div class="price-scale">
+                        <span class="scale-label">Price Scale:</span>
+                        <div class="scale-colors">
+                            <div class="scale-item">
+                                <div class="scale-color" style="background: #22c55e;"></div>
+                                <span>Low</span>
+                            </div>
+                            <div class="scale-item">
+                                <div class="scale-color" style="background: #f59e0b;"></div>
+                                <span>Medium</span>
+                            </div>
+                            <div class="scale-item">
+                                <div class="scale-color" style="background: #ef4444;"></div>
+                                <span>High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <svg id="india-map-svg" viewBox="0 0 650 850" xmlns="http://www.w3.org/2000/svg">
+                        <path class="state-path" data-state="Jammu and Kashmir" d="M 145 55 L 165 50 L 185 55 L 195 70 L 210 75 L 225 85 L 235 95 L 240 110 L 235 125 L 220 135 L 205 140 L 190 138 L 175 132 L 160 125 L 150 110 L 145 95 L 140 80 L 145 65 Z"/>
+                        <path class="state-path" data-state="Himachal Pradesh" d="M 205 140 L 220 135 L 235 140 L 248 148 L 255 160 L 250 175 L 240 185 L 225 190 L 210 188 L 198 180 L 195 165 L 200 150 Z"/>
+                        <path class="state-path" data-state="Punjab" d="M 175 132 L 190 138 L 205 140 L 210 155 L 215 170 L 210 185 L 195 195 L 180 192 L 165 185 L 158 170 L 160 155 L 168 142 Z"/>
+                        <path class="state-path" data-state="Uttarakhand" d="M 240 185 L 255 180 L 270 185 L 280 195 L 285 210 L 278 225 L 265 230 L 250 228 L 238 218 L 235 203 Z"/>
+                        <path class="state-path" data-state="Haryana" d="M 195 195 L 210 188 L 225 190 L 235 200 L 238 215 L 230 230 L 215 235 L 200 230 L 188 218 L 185 205 Z"/>
+                        <path class="state-path" data-state="Delhi" d="M 215 215 L 223 212 L 228 218 L 225 225 L 218 227 L 213 223 Z"/>
+                        <path class="state-path" data-state="Rajasthan" d="M 145 220 L 165 210 L 185 205 L 200 210 L 215 218 L 225 235 L 230 255 L 228 280 L 220 305 L 208 325 L 195 345 L 180 360 L 165 368 L 148 365 L 135 355 L 125 335 L 120 310 L 122 285 L 128 260 L 138 240 Z"/>
+                        <path class="state-path" data-state="Uttar Pradesh" d="M 230 230 L 250 228 L 270 232 L 290 240 L 310 250 L 325 265 L 335 285 L 340 305 L 335 325 L 325 340 L 310 350 L 290 355 L 270 352 L 250 345 L 235 335 L
+                        225 318 L 220 298 L 222 275 L 228 252 Z"/>
+                        <path class="state-path" data-state="Bihar" d="M 340 305 L 355 300 L 375 305 L 390 315 L 400 330 L 398 345 L 388 358 L 372 365 L 355 363 L 342 355 L 335 340 L 335 325 Z"/>
+                        <path class="state-path" data-state="Sikkim" d="M 425 308 L 435 305 L 442 312 L 440 322 L 432 325 L 425 320 Z"/>
+                        <path class="state-path" data-state="Arunachal Pradesh" d="M 445 280 L 475 275 L 505 280 L 525 295 L 535 315 L 530 335 L 515 345 L 495 348 L 475 343 L 460 333 L 450 318 L 445 300 Z"/>
+                        <path class="state-path" data-state="Nagaland" d="M 515 345 L 530 342 L 542 350 L 540 365 L 530 373 L 518 370 L 510 360 L 512 350 Z"/>
+                        <path class="state-path" data-state="Manipur" d="M 518 370 L 530 373 L 535 385 L 530 398 L 520 403 L 510 398 L 508 385 L 512 375 Z"/>
+                        <path class="state-path" data-state="Mizoram" d="M 510 398 L 520 403 L 522 418 L 515 430 L 505 432 L 498 425 L 498 410 L 503 402 Z"/>
+                        <path class="state-path" data-state="Tripura" d="M 485 395 L 495 392 L 503 400 L 502 412 L 493 418 L 483 415 L 480 405 Z"/>
+                        <path class="state-path" data-state="Meghalaya" d="M 465 360 L 480 357 L 492 363 L 490 378 L 478 385 L 465 382 L 460 372 Z"/>
+                        <path class="state-path" data-state="Assam" d="M 425 325 L 445 320 L 470 325 L 490 335 L 510 345 L 515 360 L 505 375 L 485 385 L 465 388 L 445 383 L 425 373 L 410 360 L 405 345 L 410 330 Z"/>
+                        <path class="state-path" data-state="West Bengal" d="M 398 345 L 410 340 L 425 345 L 435 360 L 440 380 L 435 400 L 425 415 L 410 425 L 395 428 L 380 423 L 368 410 L 362 395 L 365 378 L 375 363 L 388 352 Z"/>
+                        <path class="state-path" data-state="Jharkhand" d="M 355 363 L 372 365 L 385 375 L 390 390 L 385 405 L 372 415 L 355 418 L 340 413 L 330 400 L 328 385 L 335 370 Z"/>
+                        <path class="state-path" data-state="Odisha" d="M 372 415 L 385 418 L 398 428 L 405 445 L 408 465 L 402 485 L 390 500 L 375 508 L 358 510 L 345 503 L 335 488 L 332 470 L 338 450 L 350 432 Z"/>
+                        <path class="state-path" data-state="Chhattisgarh" d="M 290 355 L 310 360 L 330 370 L 342 385 L 348 405 L 345 425 L 335 445 L 318 458 L 298 463 L 280 458 L 268 445 L 262 428 L 265 408 L 275 388 L 285 370 Z"/>
+                        <path class="state-path" data-state="Madhya Pradesh" d="M 195 345 L 220 340 L 245 343 L 270 350 L 290 360 L 300 380 L 305 405 L 298 430 L 285 450 L 268 463 L 248 468 L 225 465 L 205 455 L 188 438 L 175 418 L 168 395 L 172 370 L 182 355 Z"/>
+                        <path class="state-path" data-state="Gujarat" d="M 95 365 L 115 358 L 138 360 L 160 368 L 175 385 L 182 410 L 178 435 L 168 458 L 152 475 L 132 485 L 110 488 L 90 483 L 72 470 L 62 450 L 60 425 L 65 400 L 78 380 Z"/>
+                        <path class="state-path" data-state="Maharashtra" d="M 152 475 L 175 470 L 200 473 L 225 480 L 248 490 L 265 505 L 275 525 L 278 550 L 270 575 L 255 595 L 235 608 L 210 615 L 185 615 L 160 608 L 140 595 L 125 575 L 118 550 L 120 525 L 130 502 Z"/>
+                        <path class="state-path" data-state="Goa" d="M 140 595 L 152 590 L 162 598 L 160 610 L 150 615 L 140 610 L 138 602 Z"/>
+                        <path class="state-path" data-state="Telangana" d="M 265 505 L 285 500 L 305 508 L 318 525 L 322 545 L 315 565 L 300 578 L 280 583 L 263 578 L 252 563 L 250 543 L 255 523 Z"/>
+                        <path class="state-path" data-state="Andhra Pradesh" d="M 280 583 L 300 580 L 320 585 L 338 598 L 350 620 L 355 645 L 350 670 L 338 690 L 320 705 L 298 713 L 275 715 L 255 708 L 240 693 L 232 673 L 230 650 L 238 625 L 255 605 L 270 590 Z"/>
+                        <path class="state-path" data-state="Karnataka" d="M 185 615 L 210 618 L 235 625 L 255 640 L 265 665 L 265 690 L 255 715 L 238 735 L 215 748 L 190 753 L 165 750 L 145 738 L 130 718 L 122 693 L 122 668 L 132 645 L 150 628 Z"/>
+                        <path class="state-path" data-state="Kerala" d="M 145 738 L 160 742 L 172 758 L 178 780 L 178 805 L 170 825 L 155 838 L 138 843 L 122 840 L 110 828 L 105 808 L 105 785 L 112 763 L 125 748 Z"/>
+                        <path class="state-path" data-state="Tamil Nadu" d="M 190 753 L 215 750 L 240 755 L 262 768 L 278 788 L 285 810 L 282 833 L 270 850 L 248 860 L 222 863 L 198 858 L 178 845 L 168 828 L 165 808 L 170 785 L 180 768 Z"/>
+                        <path class="state-path" data-state="Puducherry" d="M 242 788 L 248 786 L 252 792 L 250 798 L 244 800 L 240 795 Z"/>
+                        <path class="state-path" data-state="Andaman and Nicobar Islands" d="M 550 650 L 558 648 L 563 655 L 568 680 L 565 705 L 558 720 L 548 725 L 540 720 L 535 700 L 538 675 L 545 660 Z"/>
+                        <path class="state-path" data-state="Lakshadweep" d="M 35 700 L 42 698 L 47 705 L 45 712 L 38 714 L 33 708 Z"/>
+                    </svg>
+                    
+                    <div id="mapTooltip" class="map-tooltip">
+                        <div class="tooltip-header">
+                            <strong id="tooltipState">State</strong>
+                        </div>
+                        <div class="tooltip-content">
+                            <div class="tooltip-item">
+                                <span class="tooltip-label">Crop:</span>
+                                <span id="tooltipCrop">Rice</span>
+                            </div>
+                            <div class="tooltip-item">
+                                <span class="tooltip-label">Price:</span>
+                                <span id="tooltipPrice">₹0</span>
+                            </div>
+                            <div class="tooltip-item">
+                                <span class="tooltip-label">Market:</span>
+                                <span id="tooltipMarket">APMC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="market-table">
+            <h3><i class="fas fa-table"></i> Live Market Data</h3>
+            <div class="error-message" id="errorMessage"></div>
+            <div class="table-container">
+                <table id="marketDataTable">
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Market</th>
+                            <th>State</th>
+                            <th>Date</th>
+                            <th>Min Price (₹/quintal)</th>
+                            <th>Max Price (₹/quintal)</th>
+                            <th>Modal Price (₹/quintal)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let priceChart = null;
+        let currentCrop = 'Paddy';
+        let marketData = [];
+        let stateData = {};
+
+        Chart.defaults.color = '#e2e8f0';
+        Chart.defaults.backgroundColor = '#374151';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            setupEventListeners();
+            loadInitialData();
+            setupMapInteractions();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('cropButtons').addEventListener('click', function(e) {
+                if (e.target.closest('.crop-button')) {
+                    const button = e.target.closest('.crop-button');
+                    const crop = button.dataset.crop;
+                    
+                    document.querySelectorAll('.crop-button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    currentCrop = crop;
+                    document.getElementById('cropSearch').value = '';
+                    loadCropData(crop);
+                }
+            });
+
+            document.getElementById('searchBtn').addEventListener('click', performSearch);
+            document.getElementById('cropSearch').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+        }
+
+        function initializeCharts() {
+            const priceCtx = document.getElementById('priceChart').getContext('2d');
+            priceChart = new Chart(priceCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Modal Price',
+                        data: [],
+                        borderColor: '#48bb78',
+                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Min Price',
+                        data: [],
+                        borderColor: '#fc8181',
+                        backgroundColor: 'rgba(252, 129, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Max Price',
+                        data: [],
+                        borderColor: '#63b3ed',
+                        backgroundColor: 'rgba(99, 179, 237, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#4a5568'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#4a5568'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Price (₹/quintal)'
+                            }
+                        }
+                    }
+                }
+            });
+            updateChartLegend();
+        }
+
+        function setupMapInteractions() {
+            const statePaths = document.querySelectorAll('.state-path');
+            const tooltip = document.getElementById('mapTooltip');
+            const mapContainer = document.querySelector('.map-container');
+            
+            statePaths.forEach(path => {
+                path.addEventListener('mouseenter', function(e) {
+                    const stateName = this.dataset.state;
+                    const stateInfo = stateData[stateName];
+                    
+                    if (stateInfo && stateInfo.modal_price > 0) {
+                        document.getElementById('tooltipState').textContent = stateName;
+                        document.getElementById('tooltipCrop').textContent = currentCrop;
+                        document.getElementById('tooltipPrice').textContent = `₹${stateInfo.modal_price.toLocaleString('en-IN')}/quintal`;
+                        document.getElementById('tooltipMarket').textContent = stateInfo.market || 'Multiple Markets';
+                        tooltip.classList.add('visible');
+                        this.style.filter = 'brightness(1.5)';
+                        this.style.strokeWidth = '2';
+                    } else {
+                        document.getElementById('tooltipState').textContent = stateName;
+                        document.getElementById('tooltipCrop').textContent = currentCrop;
+                        document.getElementById('tooltipPrice').textContent = 'No data available';
+                        document.getElementById('tooltipMarket').textContent = '-';
+                        tooltip.classList.add('visible');
+                    }
+                });
+                
+                path.addEventListener('mousemove', function(e) {
+                    const rect = mapContainer.getBoundingClientRect();
+                    const tooltipRect = tooltip.getBoundingClientRect();
+                    
+                    let left = e.clientX - rect.left + 20;
+                    let top = e.clientY - rect.top - 10;
+                    
+                    if (left + tooltipRect.width > rect.width) {
+                        left = e.clientX - rect.left - tooltipRect.width - 20;
+                    }
+                    if (top + tooltipRect.height > rect.height) {
+                        top = e.clientY - rect.top - tooltipRect.height - 10;
+                    }
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                });
+                
+                path.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                    this.style.filter = '';
+                    this.style.strokeWidth = '';
+                });
+                
+                path.addEventListener('click', function() {
+                    const stateName = this.dataset.state;
+                    document.getElementById('stateFilter').value = stateName;
+                    filterTable(stateName, document.getElementById('marketFilter').value);
+                    document.querySelector('.market-table').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        function updateMapColors() {
+            const statePaths = document.querySelectorAll('.state-path');
+            const prices = Object.values(stateData).map(state => state.modal_price).filter(p => p > 0);
+            
+            if (prices.length === 0) {
+                statePaths.forEach(path => {
+                    path.setAttribute('fill', '#4a5568');
+                    path.style.opacity = '0.7';
+                });
+                return;
+            }
+
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice;
+            
+            statePaths.forEach(path => {
+                const stateName = path.dataset.state;
+                const stateInfo = stateData[stateName];
+                
+                if (stateInfo && stateInfo.modal_price > 0) {
+                    const price = stateInfo.modal_price;
+                    const normalizedPrice = priceRange === 0 ? 0.5 : (price - minPrice) / priceRange;
+                    
+                    let color;
+                    if (normalizedPrice < 0.33) {
+                        const intensity = Math.floor(normalizedPrice * 3 * 100);
+                        color = `hsl(142, 71%, ${65 - intensity * 0.2}%)`;
+                    } else if (normalizedPrice < 0.66) {
+                        const intensity = Math.floor((normalizedPrice - 0.33) * 3 * 100);
+                        color = `hsl(${45 - intensity * 0.15}, 91%, ${62 - intensity * 0.1}%)`;
+                    } else {
+                        const intensity = Math.floor((normalizedPrice - 0.66) * 3 * 100);
+                        color = `hsl(0, 84%, ${62 - intensity * 0.1}%)`;
+                    }
+                    
+                    path.setAttribute('fill', color);
+                    path.style.opacity = '0.85';
+                    path.style.cursor = 'pointer';
+                } else {
+                    path.setAttribute('fill', '#4a5568');
+                    path.style.opacity = '0.5';
+                    path.style.cursor = 'default';
+                }
+            });
+        }
+
+        function updateChartLegend() {
+            const legend = document.getElementById('chartLegend');
+            legend.innerHTML = `
+                <div class="legend-item"><div class="legend-color" style="background-color: #48bb78;"></div><span>Modal Price</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #fc8181;"></div><span>Min Price</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #63b3ed;"></div><span>Max Price</span></div>
+            `;
+        }
+
+        async function loadInitialData() {
+            await loadCropData(currentCrop);
+        }
+
+        async function loadCropData(crop) {
+            showChartLoading(true);
+            clearPreviousData();
+
+            try {
+                const url = `/get_market_prices?crops=${crop}&limit=500`;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                     showError(`No recent market data found for ${crop}. Please try another crop or search term.`);
+                     marketData = [];
+                } else {
+                    marketData = data;
+                }
+
+                updatePriceChart(marketData);
+                updateMapData(marketData);
+                updateMarketTable(marketData);
+                updateStats(marketData);
+                populateMarketFilter(marketData);
+                
+            } catch (error) {
+                console.error('Error loading crop data:', error);
+                showError(error.message);
+                marketData = [];
+                clearPreviousData();
+            } finally {
+                showChartLoading(false);
+            }
+        }
+        
+        function clearPreviousData() {
+            updatePriceChart([]);
+            updateMapData([]);
+            updateMarketTable([]);
+            updateStats([]);
+            populateMarketFilter([]);
+        }
+
+        function populateMarketFilter(data) {
+            const marketFilter = document.getElementById('marketFilter');
+            marketFilter.innerHTML = '<option value="">All Markets</option>';
+            if (!data || data.length === 0) return;
+
+            const markets = [...new Set(data.map(item => item.market))].sort();
+            markets.forEach(market => {
+                if (market) {
+                    const option = document.createElement('option');
+                    option.value = market;
+                    option.textContent = market;
+                    marketFilter.appendChild(option);
+                }
+            });
+        }
+
+        function updatePriceChart(data) {
+            if (!data) return;
+            const sortedData = data.filter(item => item.date).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const labels = sortedData.map(item => new Date(item.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }));
+            const modalPrices = sortedData.map(item => item.modal_price);
+            const minPrices = sortedData.map(item => item.min_price);
+            const maxPrices = sortedData.map(item => item.max_price);
+
+            priceChart.data.labels = labels;
+            priceChart.data.datasets[0].data = modalPrices;
+            priceChart.data.datasets[1].data = minPrices;
+            priceChart.data.datasets[2].data = maxPrices;
+            priceChart.update();
+        }
+
+        function updateMapData(data) {
+            stateData = {};
+            if (!data || data.length === 0) return;
+
+            const stateGroups = {};
+            data.forEach(item => {
+                if (!item.state || !item.date || !item.modal_price) return;
+                
+                if (!stateGroups[item.state]) {
+                    stateGroups[item.state] = {
+                        prices: [],
+                        minPrices: [],
+                        maxPrices: [],
+                        markets: new Set(),
+                        latestDate: item.date
+                    };
+                }
+                
+                if (new Date(item.date) >= new Date(stateGroups[item.state].latestDate)) {
+                    stateGroups[item.state].latestDate = item.date;
+                }
+                
+                stateGroups[item.state].prices.push(item.modal_price);
+                if (item.min_price) stateGroups[item.state].minPrices.push(item.min_price);
+                if (item.max_price) stateGroups[item.state].maxPrices.push(item.max_price);
+                if (item.market) stateGroups[item.state].markets.add(item.market);
+            });
+
+            Object.keys(stateGroups).forEach(state => {
+                const group = stateGroups[state];
+                const avgPrice = group.prices.reduce((a, b) => a + b, 0) / group.prices.length;
+                const avgMin = group.minPrices.length > 0 ? group.minPrices.reduce((a, b) => a + b, 0) / group.minPrices.length : null;
+                const avgMax = group.maxPrices.length > 0 ? group.maxPrices.reduce((a, b) => a + b, 0) / group.maxPrices.length : null;
+                
+                stateData[state] = {
+                    modal_price: Math.round(avgPrice),
+                    min_price: avgMin ? Math.round(avgMin) : null,
+                    max_price: avgMax ? Math.round(avgMax) : null,
+                    market: group.markets.size === 1 ? Array.from(group.markets)[0] : `${group.markets.size} Markets`,
+                    date: group.latestDate,
+                    recordCount: group.prices.length
+                };
+            });
+            
+            updateMapColors();
+        }
+
+        function updateMarketTable(data) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            if (!data || data.length === 0) return;
+
+            const sortedData = data.filter(item => item.date).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 100);
+
+            sortedData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${item.commodity || 'N/A'}</strong></td>
+                    <td>${item.market || 'N/A'}</td>
+                    <td>${item.state || 'N/A'}</td>
+                    <td>${new Date(item.date).toLocaleDateString('en-IN')}</td>
+                    <td>₹${(item.min_price || 0).toLocaleString('en-IN')}</td>
+                    <td>₹${(item.max_price || 0).toLocaleString('en-IN')}</td>
+                    <td><strong>₹${(item.modal_price || 0).toLocaleString('en-IN')}</strong></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateStats(data) {
+            document.getElementById('trendIcon').innerHTML = '<i class="fas fa-minus"></i>';
+            document.getElementById('trendIcon').className = 'stat-icon price-stable';
+            document.getElementById('trendText').textContent = 'Stable';
+            document.getElementById('avgPrice').textContent = '₹0';
+            document.getElementById('totalMarkets').textContent = '0';
+            document.getElementById('totalRecords').textContent = '0';
+
+            if (!data || data.length < 2) return;
+
+            document.getElementById('totalRecords').textContent = data.length;
+
+            const pricesByDate = data.reduce((acc, item) => {
+                if (item.date && item.modal_price > 0) {
+                    const dateStr = item.date.split('T')[0];
+                    if (!acc[dateStr]) acc[dateStr] = [];
+                    acc[dateStr].push(item.modal_price);
+                }
+                return acc;
+            }, {});
+
+            const sortedDates = Object.keys(pricesByDate).sort((a, b) => new Date(b) - new Date(a));
+            
+            if (sortedDates.length === 0) return;
+
+            const latestDate = sortedDates[0];
+            const latestPrices = pricesByDate[latestDate];
+            const latestAvg = latestPrices.reduce((a, b) => a + b, 0) / latestPrices.length;
+            document.getElementById('avgPrice').textContent = `₹${Math.round(latestAvg).toLocaleString('en-IN')}`;
+
+            if (sortedDates.length > 1) {
+                const previousDate = sortedDates[1];
+                const previousPrices = pricesByDate[previousDate];
+                const previousAvg = previousPrices.reduce((a, b) => a + b, 0) / previousPrices.length;
+                
+                const trendIcon = document.getElementById('trendIcon');
+                const trendText = document.getElementById('trendText');
+                if (latestAvg > previousAvg) {
+                    trendIcon.innerHTML = '<i class="fas fa-arrow-trend-up"></i>';
+                    trendIcon.className = 'stat-icon price-increase';
+                    trendText.textContent = 'Rising';
+                } else if (latestAvg < previousAvg) {
+                    trendIcon.innerHTML = '<i class="fas fa-arrow-trend-down"></i>';
+                    trendIcon.className = 'stat-icon price-decrease';
+                    trendText.textContent = 'Falling';
+                }
+            }
+            
+            const uniqueMarkets = new Set(data.filter(d => d.date && d.date.startsWith(latestDate)).map(item => item.market));
+            document.getElementById('totalMarkets').textContent = uniqueMarkets.size;
+        }
+
+        function showChartLoading(show) {
+            const loading = document.getElementById('chartLoading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function performSearch() {
+            const cropSearch = document.getElementById('cropSearch').value.trim();
+            const stateFilter = document.getElementById('stateFilter').value;
+            const marketFilter = document.getElementById('marketFilter').value;
+
+            if (cropSearch && cropSearch.toLowerCase() !== currentCrop.toLowerCase()) {
+                currentCrop = cropSearch;
+                document.querySelectorAll('.crop-button').forEach(btn => btn.classList.remove('active'));
+                await loadCropData(cropSearch);
+            }
+            
+            filterTable(stateFilter, marketFilter);
+        }
+
+        function filterTable(state, market) {
+            let filteredData = [...marketData];
+            if (state) {
+                filteredData = filteredData.filter(item => item.state === state);
+            }
+            if (market) {
+                filteredData = filteredData.filter(item => item.market === market);
+            }
+            updateMarketTable(filteredData);
+        }
+
+        document.getElementById('stateFilter').addEventListener('change', () => performSearch());
+        document.getElementById('marketFilter').addEventListener('change', () => performSearch());
+
+    </script>
+</body>
+</html>
