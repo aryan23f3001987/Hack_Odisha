@@ -173,5 +173,26 @@
     "avg_cost_per_acre": 15000,
     "water_requirement": "High",
     "temperature": "25–35°C"
+  },
+  {
+    "crop_name": "Pineapple",
+    "main_season": "Perennial",
+    "avg_cost_per_acre": 18000,
+    "water_requirement": "High",
+    "temperature": "22–32°C"
+  },
+  {
+    "crop_name": "Onion",
+    "main_season": "Rabi/Summer",
+    "avg_cost_per_acre": 13000,
+    "water_requirement": "Medium",
+    "temperature": "15–25°C"
+  },
+  {
+    "crop_name": "Pea",
+    "main_season": "Rabi (Winter)",
+    "avg_cost_per_acre": 9000,
+    "water_requirement": "Low",
+    "temperature": "10–20°C"
   }
 ]

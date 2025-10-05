@@ -36,12 +36,23 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-dark: #1a2332;
+            --secondary-dark: #2d3748;
+            --accent-green: #48bb78;
+            --accent-brown: #8b6914;
+            --text-light: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #4a5568;
+            --hover-bg: #3a4553;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #ffffff;
+            color: var(--text-light);
         }
 
         .header {
@@ -52,13 +63,15 @@
 
         .header h1 {
             font-size: 2.5rem;
-            color: #4CAF50;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-brown));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .header p {
-            color: #b0b0b0;
+            color: var(--text-muted);
             font-size: 1.1rem;
         }
 
@@ -71,11 +84,11 @@
         }
 
         .crop-card {
-            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            background: var(--secondary-dark);
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -88,14 +101,14 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-brown));
             border-radius: 16px 16px 0 0;
         }
 
         .crop-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 48px rgba(76, 175, 80, 0.2);
-            border-color: rgba(76, 175, 80, 0.3);
+            box-shadow: 0 12px 48px rgba(72, 187, 120, 0.2);
+            border-color: var(--accent-green);
         }
 
         .crop-header {
@@ -112,15 +125,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(76, 175, 80, 0.1);
+            background: rgba(72, 187, 120, 0.1);
             border-radius: 12px;
-            border: 2px solid rgba(76, 175, 80, 0.2);
+            border: 2px solid rgba(72, 187, 120, 0.2);
         }
 
         .crop-name {
             font-size: 1.4rem;
             font-weight: 600;
-            color: #ffffff;
+            color: var(--text-light);
         }
 
         .crop-details {
@@ -141,7 +154,7 @@
         }
 
         .detail-label {
-            color: #b0b0b0;
+            color: var(--text-muted);
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -151,19 +164,19 @@
             content: '';
             width: 6px;
             height: 6px;
-            background: #4CAF50;
+            background: var(--accent-green);
             border-radius: 50%;
             margin-right: 8px;
         }
 
         .detail-value {
-            color: #ffffff;
+            color: var(--text-light);
             font-weight: 600;
             text-align: right;
         }
 
         .season-badge {
-            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-brown));
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -182,7 +195,7 @@
             font-weight: 500;
         }
 
-        .water-low { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+        .water-low { background: rgba(72, 187, 120, 0.2); color: #48bb78; }
         .water-medium { background: rgba(255, 183, 77, 0.2); color: #FFB74D; }
         .water-high { background: rgba(255, 152, 0, 0.2); color: #FF9800; }
         .water-very-high { background: rgba(244, 67, 54, 0.2); color: #F44336; }
@@ -394,6 +407,27 @@
                 "avg_cost_per_acre": 15000,
                 "water_requirement": "High",
                 "temperature": "25–35°C"
+            },
+            {
+                "crop_name": "Pineapple",
+                "main_season": "Perennial",
+                "avg_cost_per_acre": 18000,
+                "water_requirement": "High",
+                "temperature": "22–32°C"
+            },
+            {
+                "crop_name": "Onion",
+                "main_season": "Rabi/Summer",
+                "avg_cost_per_acre": 13000,
+                "water_requirement": "Medium",
+                "temperature": "15–25°C"
+            },
+            {
+                "crop_name": "Pea",
+                "main_season": "Rabi (Winter)",
+                "avg_cost_per_acre": 9000,
+                "water_requirement": "Low",
+                "temperature": "10–20°C"
             }
         ];
 
@@ -422,7 +456,10 @@
             'Cocoa': '🍫',
             'Banana': '🍌',
             'Mango': '🥭',
-            'Papaya': '🥭'
+            'Papaya': '🥭',
+            'Pineapple': '🍍',
+            'Onion': '🧅',
+            'Pea': '🫛'
         };
 
         function getWaterClass(requirement) {
@@ -476,7 +513,6 @@
             container.innerHTML = cardsHTML;
         }
 
-        // Initialize the page
         document.addEventListener('DOMContentLoaded', renderCrops);
     </script>
 </body>

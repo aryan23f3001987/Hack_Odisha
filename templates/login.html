@@ -202,7 +202,7 @@
             position: relative;
         }
 
-        .input-wrapper i {
+        .input-wrapper .fas { /* Modified to target only fas icons */
             position: absolute;
             left: 1rem;
             top: 50%;
@@ -217,7 +217,7 @@
             background: var(--primary-dark);
             border: 2px solid var(--border-color);
             border-radius: 12px;
-            padding: 1rem 1rem 1rem 3rem;
+            padding: 1rem 1rem 1rem 3rem; /* Restored padding */
             color: var(--text-light);
             font-size: 1rem;
             transition: all 0.3s ease;
@@ -232,22 +232,8 @@
         .form-input::placeholder {
             color: var(--text-muted);
         }
-
-        .password-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.1rem;
-            z-index: 2;
-            transition: color 0.3s ease;
-        }
-
-        .password-toggle:hover {
-            color: var(--accent-green);
-        }
+        
+        /* Eye toggle style removed as it's no longer in the HTML */
 
         .form-options {
             display: flex;
@@ -458,7 +444,6 @@
     </style>
 </head>
 <body>
-    <!-- Background elements -->
     <div class="bg-element"></div>
     <div class="bg-element"></div>
     <div class="bg-element"></div>
@@ -481,7 +466,6 @@
         <div class="error-message" id="errorMessage"></div>
         <div class="success-message" id="successMessage"></div>
 
-        <!-- Login Form -->
         <form class="login-form active" id="loginForm">
             <div class="form-group">
                 <label for="loginEmail">Email Address</label>
@@ -496,7 +480,6 @@
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
                     <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
-                    <i class="fas fa-eye password-toggle" id="loginPasswordToggle"></i>
                 </div>
             </div>
 
@@ -514,7 +497,6 @@
             </button>
         </form>
 
-        <!-- Signup Form -->
         <form class="signup-form" id="signupForm">
             <div class="form-group">
                 <label for="signupName">Full Name</label>
@@ -537,7 +519,6 @@
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
                     <input type="password" id="signupPassword" class="form-input" placeholder="Create a password" required>
-                    <i class="fas fa-eye password-toggle" id="signupPasswordToggle"></i>
                 </div>
             </div>
 
@@ -546,7 +527,6 @@
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
                     <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" required>
-                    <i class="fas fa-eye password-toggle" id="confirmPasswordToggle"></i>
                 </div>
             </div>
 
@@ -576,7 +556,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -608,18 +587,8 @@
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
 
-        // Password toggle functionality
-        const passwordToggles = document.querySelectorAll('.password-toggle');
-        passwordToggles.forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                input.setAttribute('type', type);
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
-            });
-        });
-
+        // MODIFICATION: Password toggle functionality removed as it's no longer needed.
+        
         // Tab switching
         loginTab.addEventListener('click', () => switchTab('login'));
         signupTab.addEventListener('click', () => switchTab('signup'));
