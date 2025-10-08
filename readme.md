@@ -20,15 +20,19 @@ CropWise is an intelligent farming assistant that leverages AI and machine learn
 - Memory persistence for conversation continuity
 - Smart content detection and styling for warnings, recommendations, and tips
 
-### 🌦️ Weather Integration
+### 🌦️ Advanced Weather Integration
+
 - Real-time weather data using OpenWeatherMap API
-- Location-based weather forecasts
+- 5-day detailed forecast with hourly breakdowns
+- Location-based weather using geocoding
+- Comprehensive metrics: temperature, humidity, wind speed, rainfall, visibility
 - Weather impact analysis for farming activities
 
 ### 📚 Educational Resources
 - Integration with Open Library for agricultural books
 - Curated educational content and tutorials
 - Comprehensive farming guides and best practices
+- YouTube video integration for farming tutorials
 
 ### 🌱 Crop Information Cards
 - Detailed crop information database
@@ -40,6 +44,14 @@ CropWise is an intelligent farming assistant that leverages AI and machine learn
 - Smooth animations and intuitive navigation
 - Mobile-optimized interface
 - Accessibility-focused design
+
+### 💰 Market Price Tracking
+
+- Real-time agricultural commodity prices
+- Integration with India's Agriculture Market API (data.gov.in)
+- Filter by state, district, and crop type
+- Daily mandi price updates with min/max/modal prices
+- Historical price trends and analysis
 
 ## 🛠️ Technology Stack
 
@@ -59,6 +71,9 @@ CropWise is an intelligent farming assistant that leverages AI and machine learn
 - OpenAI API Key
 - Pinecone API Key
 - OpenWeatherMap API Key
+- Hugging Face API Key
+- YouTube Data API Key
+- Agriculture Market API Key
 
 ### Installation
 
@@ -86,6 +101,9 @@ CropWise is an intelligent farming assistant that leverages AI and machine learn
    OPENAI_API_KEY=your_openai_api_key_here
    PINECONE_API_KEY=your_pinecone_api_key_here
    WEATHER_API_KEY=your_openweathermap_api_key_here
+   HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+   YOUTUBE_API_KEY=your_youtube_api_key_here
+   AGRICULTURE_MARKET_API_KEY=your_agriculture_market_api_key_here
    ```
 
 5. **Prepare your agricultural data**
@@ -127,9 +145,11 @@ cropwise/
 │   ├── prompt.py         # System prompts for AI assistant
 │   └── chat_memory.py    # Chat memory management
 └── templates/
+    ├── login.html        # Login/authentication page
     ├── chat.html         # Main chat interface
     ├── weather.html      # Weather dashboard
     ├── crop_cards.html   # Crop information cards
+    ├── MarketPrices.html # Market price tracking
     └── resources.html    # Educational resources
 ```
 
@@ -142,6 +162,9 @@ cropwise/
 | `OPENAI_API_KEY` | Your OpenAI API key | ✅ |
 | `PINECONE_API_KEY` | Your Pinecone API key | ✅ |
 | `WEATHER_API_KEY` | OpenWeatherMap API key | ✅ |
+| `HUGGINGFACE_API_KEY` | Hugging Face API key for disease detection | ✅ |
+| `YOUTUBE_API_KEY` | YouTube Data API v3 key | ✅ |
+| `AGRICULTURE_MARKET_API_KEY` | India Agriculture Market API key | ✅ |
 | `PORT` | Server port (default: 8080) | ❌ |
 
 ### Customization Options
@@ -150,6 +173,8 @@ cropwise/
 - **Similarity Search**: Adjust `k` parameter in `app.py` (default: 3)
 - **Chat Model**: Change model in `app.py` (default: gpt-4o-mini)
 - **Embedding Model**: Modify in both files (default: text-embedding-3-small)
+- **Disease Detection Model**: Change HF model URL in `app.py`
+- **Confidence Threshold**: Adjust disease detection confidence threshold (default: 0.4)
 
 ## 📊 Features Deep Dive
 
