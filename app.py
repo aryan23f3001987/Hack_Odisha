@@ -1,4 +1,3 @@
-# ------------------ Actual App ------------------ #
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -13,6 +12,10 @@ import requests
 import json
 from datetime import datetime
 import firebase_admin
+from huggingface_hub import InferenceClient
+from PIL import Image
+import io
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -22,7 +25,9 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 HF_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
-HF_API_URL = "https://api-inference.huggingface.co/models/linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification"
+client = InferenceClient(
+    api_key=HF_API_KEY
+)
 
 if not HF_API_KEY:
     raise ValueError("HUGGINGFACE_API_KEY is not set in your .env file!")
@@ -255,72 +260,43 @@ def crop_cards_page():
 # ------------------ Disease Detection ------------------ #
 @app.route("/detect_disease", methods=["POST"])
 def detect_disease():
-    try:
-        image = request.files.get("image")
-        crop_name = request.form.get("crop")
-
-        if not image or not crop_name:
-            return jsonify({"error": "Please provide both an image and a crop name"}), 400
-
-        # Read image
-        image_bytes = image.read()
-        headers = {
-            "Authorization": f"Bearer {HF_API_KEY}",
-            "Content-Type": "application/octet-stream"
+    import base64
+    
+    image = request.files.get("image")
+    crop_name = request.form.get("crop")
+    
+    image_b64 = base64.b64encode(image.read()).decode("utf-8")
+    
+    res = requests.post(
+        "https://plant.id/api/v3/health_assessment",
+        headers={"Api-Key": os.getenv("PLANT_ID_API_KEY")},
+        json={
+            "images": [f"data:image/jpeg;base64,{image_b64}"],
+            "health": "all"
         }
-        res = requests.post(HF_API_URL, headers=headers, data=image_bytes)
+    )
+    data = res.json()
+    diseases = data["result"]["disease"]["suggestions"]
+    top = diseases[0]
+    
+    disease_name = top["name"]
+    confidence = top["probability"]
 
-        if res.status_code != 200:
-            return jsonify({"error": f"Hugging Face API error: {res.text}"}), res.status_code
+    # ✅ Just ask ChatGPT directly — no API details needed
+    gpt_response = chatModel.invoke(
+        f"A farmer has a {crop_name} plant infected with '{disease_name}'.\n"
+        f"Give practical advice in 3-4 sentences covering:\n"
+        f"1. What this disease does to the plant\n"
+        f"2. Recommended chemical or organic treatment\n"
+        f"3. How to prevent it from spreading"
+    )
 
-        result = res.json()
-        if not isinstance(result, list) or len(result) == 0:
-            return jsonify({"error": "No prediction returned"}), 500
-
-        # Get top prediction (always)
-        top_prediction = max(result, key=lambda x: x["score"])
-
-        # If confidence is too low (<0.3), return null disease
-        if top_prediction["score"] < 0.4:
-            advice = "Can't confidently guess the disease. Maybe try uploading a clearer picture."
-            top5 = [
-                {"label": r["label"], "score": r["score"]}
-                for r in sorted(result, key=lambda x: x["score"], reverse=True)[:5]
-            ]
-            return jsonify({
-                "crop": crop_name,
-                "disease": None,
-                "confidence": top_prediction["score"],
-                "advice": advice,
-                "top5_predictions": top5
-            })
-
-        # Otherwise return disease + advice
-        disease_name = (
-            top_prediction["label"].split("with")[-1].strip()
-            if "with" in top_prediction["label"]
-            else top_prediction["label"]
-        )
-
-        hidden_prompt = f"Crop: {crop_name}\nDisease: {disease_name}\n\nGive a short treatment advice."
-        response = chatModel.invoke(hidden_prompt)
-        advice = response.content
-
-        top5 = [
-            {"label": r["label"], "score": r["score"]}
-            for r in sorted(result, key=lambda x: x["score"], reverse=True)[:5]
-        ]
-
-        return jsonify({
-            "crop": crop_name,
-            "disease": disease_name,
-            "confidence": top_prediction["score"],
-            "advice": advice,
-            "top5_predictions": top5
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify({
+        "crop": crop_name,
+        "disease": disease_name,
+        "confidence": confidence,
+        "advice": gpt_response.content  # ✅ always has a real answer
+    })
     
 # ------------------ Market Prices ------------------ #
 @app.route("/market_prices")
@@ -387,3 +363,5 @@ def resources_page():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port, debug=False)
+
+#------------------------------------------------------------------------------------------------------------------------------
